@@ -19,11 +19,11 @@ type GeneratorTask struct {
 // WalkTree walks the taxonomy and returns a slice of GeneratorTask for each leaf,
 // using the provided frameworkPrompt and knowledgeContext.
 // If domainConfig is not nil, it resolves any PersonaID references.
-func WalkTree(node *domain.TaxonomyNode, frameworkPrompt, knowledgeContext string, domainConfig *domain.DomainConfig) []GeneratorTask {
-	return walkTree(node, []string{}, frameworkPrompt, knowledgeContext, domainConfig)
+func WalkTree(node *domain.TaxonomyNode, frameworkPrompt, knowledgeContext string, domainConfig *domain.DomainConfig, archetypeCounts map[string]int) []GeneratorTask {
+	return walkTree(node, []string{}, frameworkPrompt, knowledgeContext, domainConfig, archetypeCounts)
 }
 
-func walkTree(node *domain.TaxonomyNode, labelPath []string, frameworkPrompt, knowledgeContext string, domainConfig *domain.DomainConfig) []GeneratorTask {
+func walkTree(node *domain.TaxonomyNode, labelPath []string, frameworkPrompt, knowledgeContext string, domainConfig *domain.DomainConfig, archetypeCounts map[string]int) []GeneratorTask {
 	currentPath := append(labelPath, node.Label)
 
 	if node.IsLeaf() {
@@ -42,12 +42,18 @@ func walkTree(node *domain.TaxonomyNode, labelPath []string, frameworkPrompt, kn
 			if source == "" {
 				source = defaultSource(mixEntry.Archetype)
 			}
+			count := mixEntry.Count
+			if archetypeCounts != nil {
+				if val, ok := archetypeCounts[mixEntry.Archetype]; ok {
+					count = val
+				}
+			}
 			tasks = append(tasks, GeneratorTask{
 				Archetype:        mixEntry.Archetype,
 				Source:           source,
 				NodePath:         node.ID,
 				NodeLabelPath:    append([]string{}, currentPath...),
-				Count:            mixEntry.Count,
+				Count:            count,
 				GenerationPrompt: node.GenerationPrompt,
 				FrameworkPrompt:  frameworkPrompt,
 				KnowledgeContext: knowledgeContext,
@@ -59,7 +65,7 @@ func walkTree(node *domain.TaxonomyNode, labelPath []string, frameworkPrompt, kn
 
 	var tasks []GeneratorTask
 	for _, child := range node.Children {
-		tasks = append(tasks, walkTree(child, currentPath, frameworkPrompt, knowledgeContext, domainConfig)...)
+		tasks = append(tasks, walkTree(child, currentPath, frameworkPrompt, knowledgeContext, domainConfig, archetypeCounts)...)
 	}
 	return tasks
 }

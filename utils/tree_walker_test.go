@@ -25,7 +25,7 @@ func TestWalkTreeLeafNode(t *testing.T) {
 		},
 	}
 
-	tasks := WalkTree(tree, "fp", "kc", nil)
+	tasks := WalkTree(tree, "fp", "kc", nil, nil)
 	if len(tasks) != 2 {
 		t.Fatalf("expected 2 tasks, got %d", len(tasks))
 	}
@@ -81,7 +81,7 @@ func TestWalkTreeDeepTree(t *testing.T) {
 		},
 	}
 
-	tasks := WalkTree(tree, "fp", "kc", nil)
+	tasks := WalkTree(tree, "fp", "kc", nil, nil)
 	if len(tasks) != 2 {
 		t.Fatalf("expected 2 tasks, got %d", len(tasks))
 	}
@@ -121,7 +121,7 @@ func TestWalkTreeLabelPath(t *testing.T) {
 		},
 	}
 
-	tasks := WalkTree(tree, "fp", "kc", nil)
+	tasks := WalkTree(tree, "fp", "kc", nil, nil)
 	if len(tasks) != 1 {
 		t.Fatalf("expected 1 task, got %d", len(tasks))
 	}
@@ -134,5 +134,40 @@ func TestWalkTreeLabelPath(t *testing.T) {
 		if tasks[0].NodeLabelPath[i] != label {
 			t.Errorf("label[%d]: expected %q, got %q", i, label, tasks[0].NodeLabelPath[i])
 		}
+	}
+}
+
+func TestWalkTreeArchetypeOverrides(t *testing.T) {
+	tree := &domain.TaxonomyNode{
+		ID:    "root",
+		Label: "Root",
+		Weight: 1.0,
+		Children: []*domain.TaxonomyNode{
+			{
+				ID:    "leaf1",
+				Label: "Leaf One",
+				Weight: 1.0,
+				ArchetypeMix: []domain.ArchetypeMixEntry{
+					{Archetype: "knowledge", Count: 2},
+					{Archetype: "reasoning", Count: 1},
+				},
+			},
+		},
+	}
+
+	overrides := map[string]int{
+		"knowledge": 5,
+	}
+
+	tasks := WalkTree(tree, "fp", "kc", nil, overrides)
+	if len(tasks) != 2 {
+		t.Fatalf("expected 2 tasks, got %d", len(tasks))
+	}
+
+	if tasks[0].Archetype == "knowledge" && tasks[0].Count != 5 {
+		t.Errorf("expected knowledge count to be overridden to 5, got %d", tasks[0].Count)
+	}
+	if tasks[1].Archetype == "reasoning" && tasks[1].Count != 1 {
+		t.Errorf("expected reasoning count to remain 1, got %d", tasks[1].Count)
 	}
 }

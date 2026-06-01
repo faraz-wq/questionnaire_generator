@@ -1,13 +1,12 @@
 package handler
 
 import (
-	"context"
 	"net/http"
-	"time"
+	"strings"
 
+	"github.com/faraz/questionnaire_generator/llm"
 	"github.com/faraz/questionnaire_generator/session"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 type TurnRequest struct {
@@ -48,17 +47,49 @@ func (h *Handler) ProcessTurn(c *gin.Context) {
 	currentQ.AnswerReceived = &req.Answer
 	currentQ.Status = session.StatusAsked
 
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
-	defer cancel()
-
-	evalResult, err := h.evaluator.Evaluate(ctx, state.FrameworkPrompt, currentQ, req.Answer, state.History)
-	if err != nil {
-		h.logger.Error("evaluation failed", zap.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "evaluation failed"})
-		return
+	chosenIndex := -1
+	for idx, opt := range currentQ.Options {
+		if opt == req.Answer {
+			chosenIndex = idx
+			break
+		}
 	}
 
-	score := evalResult.Score
+	score := 1
+	conceptsCovered := []string{}
+	missingConcepts := currentQ.ExpectedConcepts
+
+	if chosenIndex == currentQ.CorrectIndex {
+		score = 5
+		conceptsCovered = currentQ.ExpectedConcepts
+		missingConcepts = []string{}
+	}
+
+	// Format evaluator reasoning to only say Correct/Incorrect and have explanation of the correct answer as a statement
+	correctFeedback := ""
+	if currentQ.CorrectIndex >= 0 && currentQ.CorrectIndex < len(currentQ.Feedbacks) {
+		correctFeedback = currentQ.Feedbacks[currentQ.CorrectIndex]
+	}
+
+	explanation := cleanExplanation(correctFeedback)
+	if explanation == "" {
+		explanation = "This choice represents the most compliant, accurate, and professional response."
+	}
+
+	prefix := "Incorrect. "
+	if chosenIndex == currentQ.CorrectIndex {
+		prefix = "Correct. "
+	}
+	reasoning := prefix + explanation
+
+	evalResult := &llm.EvalResult{
+		Score:           score,
+		VagueFlag:       false,
+		ConceptsCovered: conceptsCovered,
+		Missing:         missingConcepts,
+		Reasoning:       reasoning,
+	}
+
 	currentQ.EvalScore = &score
 	currentQ.FollowUpsUsed++
 
@@ -70,20 +101,12 @@ func (h *Handler) ProcessTurn(c *gin.Context) {
 
 	h.selector.UpdateCoverage(state.Coverage, currentQ, score)
 
-	fupCtx, fupCancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer fupCancel()
-	followUpDecision, err := h.followUpRouter.Route(fupCtx, currentQ, evalResult, state.FollowUpDepth)
-	if err != nil {
-		h.logger.Warn("follow-up routing failed", zap.Error(err))
-	}
-
 	var nextQ *session.Question
 	followUpFired := false
 
-	if followUpDecision != nil && followUpDecision.Fire && followUpDecision.Question != nil {
-		nextQ = followUpDecision.Question
-		followUpFired = true
-		state.FollowUpDepth++
+	if state.AskedTotal >= 6 {
+		nextQ = nil
+		state.FollowUpDepth = 0
 	} else {
 		nextQ = h.selector.Select(state.Pool, state.Coverage, state.AskedTotal)
 		state.FollowUpDepth = 0
@@ -105,6 +128,8 @@ func (h *Handler) ProcessTurn(c *gin.Context) {
 		"concepts_covered": evalResult.ConceptsCovered,
 		"missing":          evalResult.Missing,
 		"reasoning":        evalResult.Reasoning,
+		"feedbacks":        currentQ.Feedbacks,
+		"correct_index":    currentQ.CorrectIndex,
 	}
 
 	c.JSON(http.StatusOK, TurnResponse{
@@ -116,4 +141,46 @@ func (h *Handler) ProcessTurn(c *gin.Context) {
 		AskedTotal:    state.AskedTotal,
 		InterviewDone: interviewDone,
 	})
+}
+
+func cleanExplanation(fb string) string {
+	fb = strings.TrimSpace(fb)
+	
+	prefixes := []string{
+		"correct!",
+		"correct.",
+		"correct :",
+		"correct:",
+		"correct response!",
+		"correct response:",
+		"correct response.",
+		"correct response",
+		"exceptional response!",
+		"exceptional response:",
+		"exceptional response.",
+		"exceptional:",
+		"exceptional!",
+	}
+	
+	fbLower := strings.ToLower(fb)
+	for _, p := range prefixes {
+		if strings.HasPrefix(fbLower, p) {
+			fb = fb[len(p):]
+			fb = strings.TrimSpace(fb)
+			fb = strings.TrimLeft(fb, "!.:- ")
+			break
+		}
+	}
+	
+	if len(fb) == 0 {
+		return ""
+	}
+	
+	runes := []rune(fb)
+	if len(runes) > 0 {
+		runes[0] = []rune(strings.ToUpper(string(runes[0])))[0]
+		fb = string(runes)
+	}
+	
+	return fb
 }

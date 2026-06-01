@@ -48,7 +48,8 @@ func NewHandler(
 }
 
 type InitRequest struct {
-	DomainConfigPath string `json:"domain_config_path" binding:"required"`
+	DomainConfigPath string         `json:"domain_config_path" binding:"required"`
+	ArchetypeCounts  map[string]int `json:"archetype_counts"`
 }
 
 type InitResponse struct {
@@ -81,7 +82,7 @@ func (h *Handler) InitSession(c *gin.Context) {
 		}
 	}
 
-	tasks := utils.WalkTree(cfg.Taxonomy, cfg.FrameworkPrompt, cfg.KnowledgeContext, cfg)
+	tasks := utils.WalkTree(cfg.Taxonomy, cfg.FrameworkPrompt, cfg.KnowledgeContext, cfg, req.ArchetypeCounts)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
