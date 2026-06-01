@@ -50,11 +50,11 @@
     /* Card Frame */
     .card {
       background: #ffffff;
-      border-radius: 24px;
+      border-radius: 20px;
       box-shadow: 0 10px 30px rgba(71, 85, 105, 0.07), 0 1px 3px rgba(71, 85, 105, 0.03);
       width: 100%;
       max-width: 620px;
-      padding: 24px;
+      padding: 16px 20px;
       position: relative;
       transition: var(--transition-smooth);
       min-height: auto;
@@ -65,8 +65,8 @@
     /* Top Gear Icon */
     .settings-toggle {
       position: absolute;
-      top: 24px;
-      right: 24px;
+      top: 16px;
+      right: 16px;
       background: none;
       border: none;
       cursor: pointer;
@@ -423,9 +423,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 10px;
+      padding-bottom: 6px;
       border-bottom: 1px solid var(--border-color);
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
 
     .header-left {
@@ -484,20 +484,20 @@
       font-size: 11px;
       font-weight: 600;
       color: var(--text-light);
-      margin-bottom: 2px;
-      padding-left: 42px;
+      margin-bottom: 1px;
+      padding-left: 36px;
     }
 
     .speech-row {
       display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 8px;
+      margin-bottom: 8px;
       align-items: flex-start;
     }
 
     .avatar-circle {
-      width: 32px;
-      height: 32px;
+      width: 26px;
+      height: 26px;
       background-color: var(--navy-primary);
       color: #ffffff;
       border-radius: 50%;
@@ -505,47 +505,47 @@
       justify-content: center;
       align-items: center;
       font-weight: 700;
-      font-size: 12px;
+      font-size: 10.5px;
       flex-shrink: 0;
     }
 
     .speech-bubble {
       background-color: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 13px;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12.5px;
       color: var(--text-main);
-      line-height: 1.45;
+      line-height: 1.4;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01);
       flex: 1;
     }
 
     .choice-title {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
       color: var(--text-light);
       text-transform: uppercase;
       letter-spacing: 1.5px;
       text-align: center;
-      margin: 12px 0 8px 0;
+      margin: 6px 0 4px 0;
     }
 
     .option-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 12px;
+      gap: 4px;
+      margin-bottom: 8px;
     }
 
     .option-card {
       background-color: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 8px 12px;
+      border-radius: 8px;
+      padding: 6px 10px;
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 8px;
       cursor: pointer;
       transition: var(--transition-smooth);
       user-select: none;
@@ -581,8 +581,8 @@
     }
 
     .option-letter {
-      width: 22px;
-      height: 22px;
+      width: 18px;
+      height: 18px;
       background-color: var(--navy-light);
       color: #3f51b5;
       border-radius: 50%;
@@ -590,7 +590,7 @@
       justify-content: center;
       align-items: center;
       font-weight: 700;
-      font-size: 10px;
+      font-size: 9px;
       flex-shrink: 0;
       margin-top: 0;
     }
@@ -601,7 +601,7 @@
     }
 
     .option-text {
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--text-main);
       line-height: 1.4;
     }
@@ -610,9 +610,9 @@
     .eval-block {
       background-color: #f8fafc;
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
       animation: slideDown 0.3s ease;
     }
 
@@ -720,13 +720,13 @@
     }
 
     .eval-reasoning {
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 12.5px;
+      line-height: 1.45;
       color: var(--text-muted);
       font-style: italic;
       background-color: #ffffff;
-      padding: 12px 14px;
-      border-radius: 8px;
+      padding: 8px 10px;
+      border-radius: 6px;
       border-left: 3px solid #cbd5e1;
     }
 
@@ -1149,96 +1149,100 @@
          START SCREEN
          ========================================================================== -->
     <div id="start-screen" class="screen">
-      <div class="icon-block">
-        <svg style="width:24px;height:24px;color:#ffffff;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+        <div class="icon-block" style="width: 32px; height: 32px; margin-bottom: 0; border-radius: 8px; flex-shrink: 0;">
+          <svg style="width:18px;height:18px;color:#ffffff;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <div class="label-tag" style="margin-bottom: 2px; font-size: 9.5px;">SALES READINESS ASSESSMENT</div>
+          <h1 style="font-size: 18px; margin-bottom: 0;">Real Estate Sales Simulator</h1>
+        </div>
       </div>
-      <div class="label-tag">SALES READINESS ASSESSMENT</div>
-      <h1>Real Estate Sales Simulator</h1>
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label class="form-label" for="userName">Your name (optional)</label>
-        <input type="text" id="userName" class="input-text" placeholder="Enter your name..." autocomplete="name">
+      <div class="form-group" style="margin-bottom: 10px;">
+        <label class="form-label" style="margin-bottom: 4px; font-size: 12px;" for="userName">Your name (optional)</label>
+        <input type="text" id="userName" class="input-text" style="padding: 10px 12px; font-size: 13px;" placeholder="Enter your name..." autocomplete="name">
       </div>
 
       <!-- Premium Customizer Expansion -->
-      <div style="background-color: #f8fafc; border: 1px dashed var(--border-color); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; text-align: left;">
-        <div style="font-family: var(--font-heading); font-size: 13px; font-weight: 700; color: var(--navy-primary); margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-          <svg style="width:14px;height:14px;color:var(--navy-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div style="background-color: #f8fafc; border: 1px dashed var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; text-align: left;">
+        <div style="font-family: var(--font-heading); font-size: 12px; font-weight: 700; color: var(--navy-primary); margin-bottom: 2px; display: flex; align-items: center; gap: 6px;">
+          <svg style="width:12px;height:12px;color:var(--navy-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
           </svg>
           Simulator Customizer (Questions per Category)
         </div>
-        <p style="font-size: 10.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">Set questions per leaf node. Use 0 to disable a category.</p>
+        <p style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.3;">Customize your assessment by choosing how many questions to ask in each topic. Set to 0 to skip a topic entirely.</p>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
           
           <!-- Category Item: Knowledge -->
-          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 10px; transition: var(--transition-smooth);">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 8px; transition: var(--transition-smooth);">
             <div>
-              <div style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary);">Knowledge</div>
-              <div style="font-size: 9px; color: var(--text-light); margin-top: 1px;">Definitions & RERA rules</div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--navy-primary);">Knowledge</div>
+              <div style="font-size: 8px; color: var(--text-light); margin-top: 0px;">Definitions & RERA rules</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <button type="button" class="counter-btn" onclick="adjustCount('countKnowledge', -1)" id="btnDecKnowledge" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">−</button>
-              <span id="lblKnowledge" style="font-size: 12.5px; font-weight: 700; color: var(--navy-primary); width: 14px; text-align: center; display: inline-block;">2</span>
-              <button type="button" class="counter-btn" onclick="adjustCount('countKnowledge', 1)" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">+</button>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" class="counter-btn" onclick="adjustCount('countKnowledge', -1)" id="btnDecKnowledge" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">−</button>
+              <span id="lblKnowledge" style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary); width: 12px; text-align: center; display: inline-block;">2</span>
+              <button type="button" class="counter-btn" onclick="adjustCount('countKnowledge', 1)" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">+</button>
               <input type="hidden" id="countKnowledge" value="2">
             </div>
           </div>
 
           <!-- Category Item: Aptitude -->
-          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 10px; transition: var(--transition-smooth);">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 8px; transition: var(--transition-smooth);">
             <div>
-              <div style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary);">Aptitude</div>
-              <div style="font-size: 9px; color: var(--text-light); margin-top: 1px;">Math, yield & area metrics</div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--navy-primary);">Aptitude</div>
+              <div style="font-size: 8px; color: var(--text-light); margin-top: 0px;">Math, yield & area metrics</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <button type="button" class="counter-btn" onclick="adjustCount('countReasoning', -1)" id="btnDecReasoning" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">−</button>
-              <span id="lblReasoning" style="font-size: 12.5px; font-weight: 700; color: var(--navy-primary); width: 14px; text-align: center; display: inline-block;">2</span>
-              <button type="button" class="counter-btn" onclick="adjustCount('countReasoning', 1)" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">+</button>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" class="counter-btn" onclick="adjustCount('countReasoning', -1)" id="btnDecReasoning" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">−</button>
+              <span id="lblReasoning" style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary); width: 12px; text-align: center; display: inline-block;">2</span>
+              <button type="button" class="counter-btn" onclick="adjustCount('countReasoning', 1)" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">+</button>
               <input type="hidden" id="countReasoning" value="2">
             </div>
           </div>
 
           <!-- Category Item: Situational -->
-          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 10px; transition: var(--transition-smooth);">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 8px; transition: var(--transition-smooth);">
             <div>
-              <div style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary);">Situational</div>
-              <div style="font-size: 9px; color: var(--text-light); margin-top: 1px;">Objection handling & pressure</div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--navy-primary);">Situational</div>
+              <div style="font-size: 8px; color: var(--text-light); margin-top: 0px;">Objection handling & pressure</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <button type="button" class="counter-btn" onclick="adjustCount('countSituational', -1)" id="btnDecSituational" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">−</button>
-              <span id="lblSituational" style="font-size: 12.5px; font-weight: 700; color: var(--navy-primary); width: 14px; text-align: center; display: inline-block;">2</span>
-              <button type="button" class="counter-btn" onclick="adjustCount('countSituational', 1)" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">+</button>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" class="counter-btn" onclick="adjustCount('countSituational', -1)" id="btnDecSituational" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">−</button>
+              <span id="lblSituational" style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary); width: 12px; text-align: center; display: inline-block;">2</span>
+              <button type="button" class="counter-btn" onclick="adjustCount('countSituational', 1)" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">+</button>
               <input type="hidden" id="countSituational" value="2">
             </div>
           </div>
 
           <!-- Category Item: Behavioral -->
-          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 10px; transition: var(--transition-smooth);">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 8px; transition: var(--transition-smooth);">
             <div>
-              <div style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary);">Behavioral</div>
-              <div style="font-size: 9px; color: var(--text-light); margin-top: 1px;">Customer handling & empathy</div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--navy-primary);">Behavioral</div>
+              <div style="font-size: 8px; color: var(--text-light); margin-top: 0px;">Customer handling & empathy</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <button type="button" class="counter-btn" onclick="adjustCount('countBehavioural', -1)" id="btnDecBehavioural" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">−</button>
-              <span id="lblBehavioural" style="font-size: 12.5px; font-weight: 700; color: var(--navy-primary); width: 14px; text-align: center; display: inline-block;">2</span>
-              <button type="button" class="counter-btn" onclick="adjustCount('countBehavioural', 1)" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">+</button>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" class="counter-btn" onclick="adjustCount('countBehavioural', -1)" id="btnDecBehavioural" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">−</button>
+              <span id="lblBehavioural" style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary); width: 12px; text-align: center; display: inline-block;">2</span>
+              <button type="button" class="counter-btn" onclick="adjustCount('countBehavioural', 1)" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">+</button>
               <input type="hidden" id="countBehavioural" value="2">
             </div>
           </div>
 
           <!-- Category Item: Case Studies -->
-          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 10px; transition: var(--transition-smooth); grid-column: span 2;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 8px; transition: var(--transition-smooth); grid-column: span 2;">
             <div>
-              <div style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary);">Case Studies</div>
-              <div style="font-size: 9px; color: var(--text-light); margin-top: 1px;">Complex compliance & advisory diagnoses</div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--navy-primary);">Case Studies</div>
+              <div style="font-size: 8px; color: var(--text-light); margin-top: 0px;">Complex compliance & advisory diagnoses</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <button type="button" class="counter-btn" onclick="adjustCount('countCase', -1)" id="btnDecCase" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">−</button>
-              <span id="lblCase" style="font-size: 12.5px; font-weight: 700; color: var(--navy-primary); width: 14px; text-align: center; display: inline-block;">2</span>
-              <button type="button" class="counter-btn" onclick="adjustCount('countCase', 1)" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 12px;">+</button>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" class="counter-btn" onclick="adjustCount('countCase', -1)" id="btnDecCase" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">−</button>
+              <span id="lblCase" style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary); width: 12px; text-align: center; display: inline-block;">2</span>
+              <button type="button" class="counter-btn" onclick="adjustCount('countCase', 1)" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">+</button>
               <input type="hidden" id="countCase" value="2">
             </div>
           </div>
@@ -1246,7 +1250,7 @@
         </div>
       </div>
 
-      <button id="startBtn" class="btn-primary" onclick="startInterview()">
+      <button id="startBtn" class="btn-primary" style="padding: 12px; font-size: 15px;" onclick="startInterview()">
         Start Assessment
       </button>
     </div>
@@ -1287,14 +1291,14 @@
       </div>
 
       <!-- AI Evaluation Feedback -->
-      <div id="simEvalBlock" class="eval-block hidden" style="padding: 20px; border-radius: 16px; background-color: #f8fafc; border: 1px solid var(--border-color); margin-bottom: 24px;">
-        <div class="eval-score-row" style="border-bottom: none; margin-bottom: 12px; padding-bottom: 0; display: flex; align-items: center;">
-          <div class="eval-status" id="evalStatusText" style="font-size: 14px; font-weight: 800; letter-spacing: 0.5px;"></div>
+      <div id="simEvalBlock" class="eval-block hidden">
+        <div class="eval-score-row" style="border-bottom: none; margin-bottom: 6px; padding-bottom: 0; display: flex; align-items: center;">
+          <div class="eval-status" id="evalStatusText"></div>
         </div>
 
         <div class="eval-section" id="evalReasoningSection" style="margin-bottom: 0;">
-          <div class="eval-section-title" style="font-size: 11px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Explanation for the Answer</div>
-          <div class="eval-reasoning" id="evalReasoningText" style="font-size: 13.5px; line-height: 1.5; color: var(--text-muted); font-style: italic; background-color: #ffffff; padding: 12px 14px; border-radius: 8px; border-left: 3px solid #cbd5e1;">
+          <div class="eval-section-title" style="margin-bottom: 4px;">Explanation for the Answer</div>
+          <div class="eval-reasoning" id="evalReasoningText">
             The candidate responded very professionally and answered with appropriate details.
           </div>
         </div>
@@ -1640,7 +1644,7 @@
         const optionCard = document.createElement('div');
         optionCard.className = 'option-card';
         optionCard.innerHTML = `
-          <div style="display: flex; align-items: flex-start; gap: 16px; width: 100%;">
+          <div style="display: flex; align-items: flex-start; gap: 8px; width: 100%;">
             <div class="option-letter">${letters[index]}</div>
             <div class="option-text">${escapeHtml(choice)}</div>
           </div>
@@ -1666,7 +1670,7 @@
 
       // Show temporary analyzing loader
       selectedCard.innerHTML = `
-        <div style="display: flex; align-items: flex-start; gap: 16px; width: 100%;">
+        <div style="display: flex; align-items: flex-start; gap: 8px; width: 100%;">
           <div class="option-letter"><span class="spinner spinner-dark" style="width:10px; height:10px;"></span></div>
           <div class="option-text" style="font-weight:600; color: var(--navy-primary);">Analyzing response...</div>
         </div>
@@ -1679,7 +1683,7 @@
         const letterIndex = Array.from(cards).indexOf(selectedCard);
         const letters = ['A', 'B', 'C', 'D'];
         selectedCard.innerHTML = `
-          <div style="display: flex; align-items: flex-start; gap: 16px; width: 100%;">
+          <div style="display: flex; align-items: flex-start; gap: 8px; width: 100%;">
             <div class="option-letter">${letters[letterIndex]}</div>
             <div class="option-text">${escapeHtml(answerText)}</div>
           </div>
@@ -1689,7 +1693,7 @@
         const feedbacks = evalResult.feedbacks || [];
         const correctIndex = evalResult.correct_index;
 
-        // Reveal feedbacks and reasoning for ALL option cards
+        // Highlight correct and selected cards
         cards.forEach((c, idx) => {
           c.classList.add('disabled');
           
@@ -1716,29 +1720,6 @@
                 letterEl.style.color = '#ffffff';
               }
             }
-          }
-
-          // Add feedback/reasoning block inside the card
-          const feedbackText = feedbacks[idx] || '';
-          if (feedbackText) {
-            const feedbackDiv = document.createElement('div');
-            feedbackDiv.className = 'option-feedback';
-            feedbackDiv.style.fontSize = '12px';
-            feedbackDiv.style.marginTop = '10px';
-            feedbackDiv.style.lineHeight = '1.45';
-            feedbackDiv.style.width = '100%';
-            feedbackDiv.style.paddingLeft = '42px'; // aligns exactly with option-text!
-            
-            if (idx === correctIndex) {
-              feedbackDiv.style.color = '#059669'; // Green text
-              feedbackDiv.innerHTML = `<span style="font-weight:700;">✔ Correct:</span> ${escapeHtml(feedbackText)}`;
-            } else {
-              feedbackDiv.style.color = '#dc2626'; // Red text
-              feedbackDiv.innerHTML = `<span style="font-weight:700;">✗ Incorrect:</span> ${escapeHtml(feedbackText)}`;
-            }
-            c.appendChild(feedbackDiv);
-            c.style.flexDirection = 'column'; // stack feedback below option content
-            c.style.alignItems = 'flex-start';
           }
         });
 
@@ -1776,20 +1757,20 @@
         statusEl.textContent = 'CORRECT';
         statusEl.style.backgroundColor = '#ecfdf5';
         statusEl.style.color = '#059669';
-        statusEl.style.padding = '6px 14px';
+        statusEl.style.padding = '4px 10px';
         statusEl.style.borderRadius = '20px';
         statusEl.style.fontWeight = '800';
-        statusEl.style.fontSize = '12px';
+        statusEl.style.fontSize = '10.5px';
         statusEl.style.display = 'inline-block';
       } else {
         statusEl.className = 'eval-status poor';
         statusEl.textContent = 'INCORRECT';
         statusEl.style.backgroundColor = '#fef2f2';
         statusEl.style.color = '#ef4444';
-        statusEl.style.padding = '6px 14px';
+        statusEl.style.padding = '4px 10px';
         statusEl.style.borderRadius = '20px';
         statusEl.style.fontWeight = '800';
-        statusEl.style.fontSize = '12px';
+        statusEl.style.fontSize = '10.5px';
         statusEl.style.display = 'inline-block';
       }
 
