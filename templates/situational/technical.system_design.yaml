@@ -1,0 +1,17 @@
+slots:
+  role:
+    - "senior backend engineer"
+    - "devops lead"
+    - "site reliability engineer"
+  constraint:
+    - "strict latency SLA of 50ms p99"
+    - "legacy monolith that cannot be rewritten"
+    - "budget-constrained startup environment"
+  stakeholder:
+    - "executive leadership demanding quarterly results"
+    - "regulatory compliance team"
+    - "end users experiencing frequent outages"
+  pressure:
+    - "production is currently down"
+    - "critical demo to investors in 48 hours"
+    - "team of 3 junior engineers only"

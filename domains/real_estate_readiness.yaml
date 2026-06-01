@@ -1,0 +1,328 @@
+domain_id: "real_estate_readiness"
+framework_prompt: "You are an expert interviewer assessing candidate readiness for a real-estate agent or property consultant role. Evaluate their domain knowledge, aptitude, and customer-handling skills."
+knowledge_context: |
+  # Core Domain Knowledge Framework
+  - Foundational Knowledge: core concepts (BSP, carpet area, super built-up area, stamp duty, RERA, TDS, conveyance deed, soft launch, financial closure, stack parking, rental yield)
+  - Process Understanding: lead capture → site visit → booking → agreement → registration → handover
+  - Applied Judgment: using knowledge in real customer situations
+  - Problem Diagnosis: identifying causes behind customer complaints, documentation delays, deal drop-offs
+  - Compliance & Risk Awareness: RERA, stamp duty, TDS applicability (>₹50L), financial closure certification by lender/bank, co-op society registration (min 7 members)
+  - Customer Contextualization: translating builder terminology for first-time buyers, NRIs, investors
+  - Practical Decision-Making: balancing price, location, timeline, payment terms
+
+  # Core Aptitude Framework
+  - Verbal Processing: clear communication, explaining concepts simply
+  - Numerical & Data Reasoning: percentages, area calculations, price per sq ft, rental yield (Annual Rent / Property Value × 100), appreciation, commission, discount, profit/loss
+  - Logical & Analytical Reasoning: structured thinking, sequencing, pattern recognition
+  - Attention & Accuracy: spotting errors in contracts, price sheets, legal clauses
+  - Decision-Making Speed: quick mental math, rapid trade-off assessment under time pressure
+  - Working Memory & Information Handling: recalling multiple property details simultaneously
+  - Learning Agility & Adaptability: absorbing new RERA rules, market trends, financing options
+
+  # Core Framework for Customer Handling Assessment
+  - Communication Clarity: expressing clearly, understanding customer intent, avoiding confusion
+  - Emotional & Social Handling: empathy, rapport, managing difficult customer emotions
+  - Problem Solving & Judgment: resolving customer issues effectively and creatively
+  - Influence & Persuasion: guiding customer decisions positively without pressure
+  - Ownership & Accountability: taking responsibility for the customer's experience end-to-end
+  - Operational Discipline: following compliance processes while staying customer-friendly
+  - Stress Tolerance & Recovery: maintaining professionalism during high-volume or high-pressure interactions
+  - Learning & Adaptability: adjusting approach across different customer personalities and needs
+
+  # ART-2 Sample Questions (for reference)
+  - Q5: BSP does NOT include Stamp Duty and Registration charges
+  - Q6: Office space in a business center is commercial property
+  - Q7: 10% profit on SP of ₹2.2Cr → CP = ₹2Cr
+  - Q8: If customer worried about delivery timeline, show RERA registration and project milestones
+  - Q9: Modular kitchen falls under Internal Fitment
+  - Q10: ₹80L → ₹100L is 25% increase
+  - Q11: Soft launch = early phase sale before public launch
+  - Q12: Sold ₹12L at 20% loss → CP = ₹15L
+  - Q15: Financial closure ensures construction can commence with assured funds
+  - Q16: Stamp Duty = government tax on property registration
+  - Q17: 2% commission on ₹80L = ₹1,60,000
+  - Q18: Conveyance deed confirms legal ownership transfer after registration
+  - Q19: Sales process order: Lead Capture → Site Visit → Booking → Agreement
+  - Q20: Product inventory is NOT a typical lead generation source
+  - Q21: Stack parking optimizes vertical space
+  - Q22: Rental yield = Annual Rent / Property Value × 100
+  - Q23: Min 7 members to register a co-op housing society
+  - Q24: TDS applicable when property value exceeds ₹50L
+  - Q25: Lender/Bank certifies financial closure
+  - Q26: 10% annual appreciation on ₹60L after 2 years = ₹72.6L
+  - Q27: If customer not answering, wait 2-3 days then send polite WhatsApp reminder
+  - Q28: If customer insists on undervaluation, politely refuse and explain legal implications
+  - Q29: Price Sheet is shared after explaining project details and pricing
+taxonomy:
+  id: "root"
+  label: "Root"
+  weight: 1.0
+  children:
+    - id: "domain"
+      label: "Domain Knowledge"
+      weight: 0.33
+      children:
+        - id: "domain.foundational"
+          label: "Foundational Knowledge"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 2
+          generation_prompt: "Ask about core real-estate terminology: BSP, carpet vs super built-up area, stamp duty, RERA, TDS, conveyance deed, financial closure, stack parking, rental yield, soft launch."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "domain.process"
+          label: "Process Understanding"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 2
+          generation_prompt: "Ask about the complete sales lifecycle from lead capture through registration and handover. Cover site visits, booking, agreement, RERA registration, financial closure."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "domain.applied"
+          label: "Applied Judgment"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "situational"
+              source: "slot_fill"
+              count: 2
+          generation_prompt: "Present a realistic real-estate scenario using role, constraint, stakeholder, and pressure. Ask what the agent should do."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "domain.diagnosis"
+          label: "Problem Diagnosis"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "case"
+              source: "free_llm"
+              count: 1
+          generation_prompt: "Give a symptom (customer is unhappy, deal fell through, documents delayed) and ask the candidate to diagnose the root cause."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "domain.compliance"
+          label: "Compliance & Risk Awareness"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 2
+          generation_prompt: "Cover RERA, stamp duty, TDS threshold (₹50L), financial closure certification, co-op society registration (min 7 members), conveyance deed, and legal implications of undervaluation."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "domain.context"
+          label: "Customer Contextualization"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "behavioural"
+              source: "star"
+              count: 1
+          generation_prompt: "Ask for a past example where the candidate translated complex real-estate terms into simple customer-friendly language for a first-time buyer or NRI."
+          follow_up_flag: true
+          max_follow_ups: 1
+        - id: "domain.decision"
+          label: "Practical Decision-Making"
+          weight: 0.16
+          archetype_mix:
+            - archetype: "reasoning"
+              source: "parametric"
+              count: 2
+          generation_prompt: "Present trade-off scenarios: price vs location, timeline vs quality, budget flexibility, discount vs loan."
+          follow_up_flag: true
+          max_follow_ups: 2
+
+    - id: "aptitude"
+      label: "Aptitude"
+      weight: 0.33
+      children:
+        - id: "aptitude.verbal"
+          label: "Verbal Processing"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Ask the candidate to explain a real-estate concept (e.g., carpet area, stamp duty) in simple terms as if speaking to a first-time homebuyer."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "aptitude.numerical"
+          label: "Numerical & Data Reasoning"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "reasoning"
+              source: "parametric"
+              count: 2
+          generation_prompt: "Use percentages, area calculations, price per sq ft, rental yield, appreciation, commission, and profit/loss scenarios relevant to real estate."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "aptitude.logical"
+          label: "Logical & Analytical Reasoning"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "reasoning"
+              source: "parametric"
+              count: 2
+          generation_prompt: "Pattern recognition, sequencing, syllogisms, and structured thinking puzzles."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "aptitude.attention"
+          label: "Attention & Accuracy"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Present a short contract clause or price sheet with a subtle error and ask the candidate to spot the inconsistency."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "aptitude.speed"
+          label: "Decision-Making Speed"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "reasoning"
+              source: "parametric"
+              count: 2
+          generation_prompt: "Quick mental math and rapid trade-off questions that must be answered under time pressure."
+          follow_up_flag: false
+          max_follow_ups: 0
+        - id: "aptitude.memory"
+          label: "Working Memory & Information Handling"
+          weight: 0.14
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Present a list of 5-7 property details (price, area, location, amenities, possession date, floor) and ask the candidate to recall specific items."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "aptitude.agility"
+          label: "Learning Agility & Adaptability"
+          weight: 0.16
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Ask how the candidate would adapt to a new RERA regulation change, a shift in market trends, or a new financing product."
+          follow_up_flag: true
+          max_follow_ups: 2
+
+    - id: "customer"
+      label: "Customer Handling"
+      weight: 0.34
+      children:
+        - id: "customer.clarity"
+          label: "Communication Clarity"
+          weight: 0.125
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Ask the candidate how they would explain a complex real-estate concept (TDS, stamp duty, floor rise charges) to a first-time buyer clearly."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "customer.emotional"
+          label: "Emotional & Social Handling"
+          weight: 0.125
+          archetype_mix:
+            - archetype: "situational"
+              source: "slot_fill"
+              count: 1
+          generation_prompt: "Present a scenario where the customer is frustrated, anxious, or emotional. Ask how the agent would handle the interaction."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "customer.problem_solving"
+          label: "Problem Solving & Judgment"
+          weight: 0.125
+          archetype_mix:
+            - archetype: "case"
+              source: "free_llm"
+              count: 1
+          generation_prompt: "Give a complex customer issue (budget mismatch, delivery delay, documentation problem) and ask the candidate to solve it."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "customer.influence"
+          label: "Influence & Persuasion"
+          weight: 0.125
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Ask how the candidate would gently guide a hesitant customer toward a good decision without being pushy."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "customer.ownership"
+          label: "Ownership & Accountability"
+          weight: 0.125
+          archetype_mix:
+            - archetype: "behavioural"
+              source: "star"
+              count: 1
+          generation_prompt: "Ask for a past example where the candidate went above and beyond to ensure a customer had a great experience."
+          follow_up_flag: true
+          max_follow_ups: 1
+        - id: "customer.discipline"
+          label: "Operational Discipline"
+          weight: 0.125
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Ask how the candidate balances following compliance processes (RERA, documentation, legal checks) while keeping the customer experience positive."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "customer.stress"
+          label: "Stress Tolerance & Recovery"
+          weight: 0.125
+          archetype_mix:
+            - archetype: "situational"
+              source: "slot_fill"
+              count: 1
+          generation_prompt: "Present a high-pressure scenario: multiple customers waiting, a deal about to fall through, or an irate customer on the phone."
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "customer.adaptability"
+          label: "Learning & Adaptability"
+          weight: 0.125
+          archetype_mix:
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Ask how the candidate adapts their communication and sales style when dealing with different customer segments: first-time buyers, investors, NRIs, senior citizens."
+          follow_up_flag: true
+          max_follow_ups: 2
+
+competencies:
+  - "handling customer objections"
+  - "negotiating property deals"
+  - "explaining legal and financial documents"
+  - "building long-term client relationships"
+  - "managing multiple leads simultaneously"
+  - "translating technical real-estate terms for customers"
+  - "resolving customer complaints effectively"
+
+situational_slots:
+  role:
+    - "real estate agent"
+    - "property consultant"
+    - "sales advisor"
+    - "customer relationship manager"
+  constraint:
+    - "tight customer budget"
+    - "limited inventory in the preferred location"
+    - "strict RERA compliance requirements"
+    - "builder facing delivery delays"
+    - "customer is an NRI with limited physical presence"
+  stakeholder:
+    - "first-time homebuyer"
+    - "real estate investor"
+    - "NRI family"
+    - "senior citizen downsizing"
+    - "young professional couple"
+  pressure:
+    - "closing deadline is approaching this week"
+    - "customer is threatening to walk away from the deal"
+    - "multiple offers on the same shortlisted property"
+    - "customer is unhappy with the payment terms"
+    - "documentation is incomplete and the registration date is near"

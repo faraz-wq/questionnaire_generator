@@ -1,0 +1,43 @@
+- template: "A customer has a budget of {{budget}} but is interested in a property that starts at {{premium}}. How do you handle this situation?"
+  slots:
+    budget: "₹50,00,000"
+    premium: "₹65,00,000"
+  answer: "Reconfirm budget flexibility, explain the additional value of the premium property, and offer a slightly higher option with justification."
+  rule: "budget gap handling"
+  difficulty: "medium"
+
+- template: "A builder offers a {{discount}}% discount for full upfront payment, but the customer prefers a home loan. What do you recommend?"
+  slots:
+    discount: "5"
+  answer: "Calculate the total savings from the discount vs loan interest, present both options clearly, and let the customer decide based on their liquidity."
+  rule: "discount vs loan trade-off"
+  difficulty: "medium"
+
+- template: "An under-construction project is delayed by {{delay}} months. The customer is unhappy and considering cancellation. What do you do?"
+  slots:
+    delay: "6"
+  answer: "Acknowledge the delay, explain the reasons if known, show RERA protection, offer alternatives (comparable ready-to-move-in properties), and negotiate compensation from the builder if possible."
+  rule: "handling delivery delay"
+  difficulty: "hard"
+
+- template: "A customer asks: 'This property has a rental yield of {{yield}}%. Is it a good investment?' How do you respond?"
+  slots:
+    yield: "3"
+  answer: "Compare with market average yields (2.5-4% typically), factor in appreciation potential, location growth, and the customer's investment horizon. A 3% yield is reasonable if appreciation prospects are strong."
+  rule: "investment advisory"
+  difficulty: "medium"
+
+- template: "A customer wants to undervalue the agreement to save on stamp duty. The property is worth {{value}}. They suggest showing {{undervalue}}. What do you do?"
+  slots:
+    value: "₹60,00,000"
+    undervalue: "₹45,00,000"
+  answer: "Politely refuse and explain the legal implications: tax evasion penalties, resale issues, bank loan eligibility problems. Suggest legal ways to optimize, such as correctly deducting amenities."
+  rule: "legal compliance"
+  difficulty: "hard"
+
+- template: "Two customers are interested in the same unit. Customer A is ready to book now. Customer B is offering {{extra}} more but needs a week. How do you proceed?"
+  slots:
+    extra: "₹2,00,000"
+  answer: "Inform Customer B about the competing offer and give a 24-48 hour deadline. If they can't commit, proceed with Customer A. Keep communication transparent with both parties."
+  rule: "multiple offer handling"
+  difficulty: "hard"

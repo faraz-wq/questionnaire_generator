@@ -1,0 +1,15 @@
+domain_id: "valid_test"
+framework_prompt: "Test framework prompt"
+knowledge_context: "Test knowledge context"
+taxonomy:
+  id: "root"
+  label: "Root"
+  weight: 1.0
+  children:
+    - id: "leaf1"
+      label: "Leaf One"
+      weight: 1.0
+      archetype_mix:
+        - archetype: "knowledge"
+          count: 2
+      generation_prompt: "Test generation prompt"

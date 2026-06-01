@@ -1,0 +1,10 @@
+domain_id: "invalid_test"
+taxonomy:
+  id: "root"
+  label: "Root"
+  weight: 1.0
+  children:
+    - id: "leaf1"
+      label: "Leaf One"
+      weight: 1.0
+      archetype_mix: []

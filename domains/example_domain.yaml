@@ -1,0 +1,87 @@
+domain_id: "example_domain"
+framework_prompt: "You are an expert interviewer assessing candidate suitability for software engineering roles."
+knowledge_context: |
+  # Software Engineering Fundamentals
+  ## Algorithms
+  - Time complexity: O(n), O(n log n), O(n²)
+  - Common data structures: arrays, linked lists, hash tables, trees
+  ## System Design
+  - Scalability principles: horizontal vs vertical scaling
+  - CAP theorem basics
+taxonomy:
+  id: "root"
+  label: "Root"
+  weight: 1.0
+  children:
+    - id: "aptitude"
+      label: "Aptitude"
+      weight: 0.4
+      children:
+        - id: "aptitude.logical"
+          label: "Logical Reasoning"
+          weight: 0.5
+          archetype_mix:
+            - archetype: "reasoning"
+              source: "parametric"
+              count: 1
+            - archetype: "knowledge"
+              source: "kb_prompt"
+              count: 1
+          generation_prompt: "Focus on pattern recognition and logical deduction"
+          follow_up_templates:
+            - id: "logical_followup_1"
+              trigger: "score_low"
+              text: "Can you explain your reasoning process for arriving at your answer?"
+            - id: "logical_followup_2"
+              trigger: "vague"
+              text: "What specific rule or pattern did you apply?"
+        - id: "aptitude.behavioural"
+          label: "Behavioural"
+          weight: 0.5
+          archetype_mix:
+            - archetype: "behavioural"
+              source: "star"
+              count: 1
+          generation_prompt: "Focus on past experiences and STAR method responses"
+    - id: "technical"
+      label: "Technical Knowledge"
+      weight: 0.6
+      children:
+        - id: "technical.algorithms"
+          label: "Algorithms"
+          weight: 0.4
+          archetype_mix:
+            - archetype: "knowledge"
+              count: 1
+          generation_prompt: "Questions about core algorithmic concepts"
+          follow_up_flag: true
+          max_follow_ups: 2
+        - id: "technical.system_design"
+          label: "System Design"
+          weight: 0.4
+          archetype_mix:
+            - archetype: "case"
+              source: "free_llm"
+              count: 1
+          generation_prompt: "Design scalable systems for given scenarios"
+          follow_up_templates:
+            - id: "design_followup"
+              trigger: "always"
+              text: "How would your design change if the system needed to scale 10x?"
+        - id: "technical.situational"
+          label: "Situational Scenario"
+          weight: 0.2
+          archetype_mix:
+            - archetype: "situational"
+              source: "slot_fill"
+              count: 1
+          generation_prompt: "Present realistic workplace scenarios using role, constraint, and stakeholder context"
+competencies:
+  - "designing scalable systems"
+  - "debugging complex issues"
+  - "collaborating in cross-functional teams"
+situational_slots:
+  role: ["backend developer", "devops engineer"]
+  constraint: ["legacy system", "strict latency requirements"]
+  stakeholder: ["end users", "business stakeholders"]
+  pressure: ["production outage", "upcoming release deadline"]

@@ -1,0 +1,61 @@
+- template: "Quick: What is {{a}}% of {{b}}?"
+  slots:
+    a: "15"
+    b: "₹60,000"
+  answer: "₹9,000"
+  rule: "percentage calculation"
+  difficulty: "easy"
+
+- template: "A flat costs {{price}}. With a {{discount}}% discount, how much do you pay?"
+  slots:
+    price: "₹50,00,000"
+    discount: "5"
+  answer: "₹47,50,000"
+  rule: "discount calculation: price × (1 - discount%/100)"
+  difficulty: "easy"
+
+- template: "If {{count}} apartments share {{total}} sq ft of common area, how many sq ft per apartment?"
+  slots:
+    count: "20"
+    total: "6000"
+  answer: "300 sq ft"
+  rule: "division: total / count"
+  difficulty: "easy"
+
+- template: "Annual maintenance is {{annual}}. What is the monthly maintenance?"
+  slots:
+    annual: "₹60,000"
+  answer: "₹5,000"
+  rule: "annual to monthly: annual / 12"
+  difficulty: "easy"
+
+- template: "A property worth {{value}} needs a {{percent}}% down payment. How much is the down payment?"
+  slots:
+    value: "₹75,00,000"
+    percent: "20"
+  answer: "₹15,00,000"
+  rule: "down payment = value × percent%"
+  difficulty: "easy"
+
+- template: "If a builder gives {{sqft}} sq ft of FSI and the carpet area for each unit is {{carpet}} sq ft, how many units can be built?"
+  slots:
+    sqft: "10000"
+    carpet: "1000"
+  answer: "10"
+  rule: "units = total FSI / carpet per unit"
+  difficulty: "medium"
+
+- template: "An investor buys 2 plots at {{price}} each. What is the total investment?"
+  slots:
+    price: "₹35,00,000"
+  answer: "₹70,00,000"
+  rule: "multiplication: 2 × price"
+  difficulty: "easy"
+
+- template: "If the EMI per lakh is {{emi}} for a loan of {{loan_amount}} lakhs, what is the monthly EMI?"
+  slots:
+    emi: "₹950"
+    loan_amount: "40"
+  answer: "₹38,000"
+  rule: "EMI = loan_in_lakhs × emi_per_lakh"
+  difficulty: "easy"

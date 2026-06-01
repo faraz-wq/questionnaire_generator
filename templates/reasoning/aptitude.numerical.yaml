@@ -1,0 +1,81 @@
+- template: "A property is valued at {{value}}. If it appreciates by {{rate}}% annually, what will it be worth after {{years}} year(s)?"
+  slots:
+    value: "₹60,00,000"
+    rate: "10"
+    years: "2"
+  answer: "₹72,60,000"
+  rule: "compound appreciation: value × (1 + rate/100)^years"
+  difficulty: "medium"
+
+- template: "An agent earns {{commission}}% commission on a deal worth {{price}}. How much is the agent's fee?"
+  slots:
+    commission: "2"
+    price: "₹80,00,000"
+  answer: "₹1,60,000"
+  rule: "commission = price × commission%"
+  difficulty: "easy"
+
+- template: "A plot is {{length}} feet wide and {{breadth}} feet deep. What is the area in square feet?"
+  slots:
+    length: "40"
+    breadth: "60"
+  answer: "2400 sq ft"
+  rule: "area = length × breadth"
+  difficulty: "easy"
+
+- template: "If the carpet area is {{carpet}} sq ft and the super built-up area is {{super}} sq ft, what is the loading percentage?"
+  slots:
+    carpet: "1000"
+    super: "1400"
+  answer: "40%"
+  rule: "loading = (super - carpet) / carpet × 100"
+  difficulty: "medium"
+
+- template: "Stamp duty is {{rate}}% on a property worth {{value}}. How much stamp duty is payable?"
+  slots:
+    rate: "5"
+    value: "₹50,00,000"
+  answer: "₹2,50,000"
+  rule: "stamp duty = value × rate%"
+  difficulty: "easy"
+
+- template: "A builder sold a shop for {{sp}} and incurred a {{loss}}% loss. What was the original purchase price?"
+  slots:
+    sp: "₹12,00,000"
+    loss: "20"
+  answer: "₹15,00,000"
+  rule: "CP = SP / (1 - loss%/100)"
+  difficulty: "medium"
+
+- template: "A property's annual rental income is {{rent}} and its market value is {{value}}. What is the rental yield percentage?"
+  slots:
+    rent: "₹3,60,000"
+    value: "₹60,00,000"
+  answer: "6%"
+  rule: "rental yield = annual rent / property value × 100"
+  difficulty: "medium"
+
+- template: "A flat was priced at {{old_price}}. The price increased to {{new_price}}. What is the percentage increase?"
+  slots:
+    old_price: "₹80,00,000"
+    new_price: "₹1,00,00,000"
+  answer: "25%"
+  rule: "increase% = (new - old) / old × 100"
+  difficulty: "easy"
+
+- template: "If the carpet area is {{carpet}} sq ft and the super built-up area is {{super}} sq ft, and the price is {{price}}, what is the price per sq ft of super built-up area?"
+  slots:
+    carpet: "900"
+    super: "1300"
+    price: "₹65,00,000"
+  answer: "₹5000"
+  rule: "price per sq ft = total price / super built-up area"
+  difficulty: "medium"
+
+- template: "A customer pays {{down_payment}} as down payment, which is {{percent}}% of the total property value. What is the total property value?"
+  slots:
+    down_payment: "₹10,00,000"
+    percent: "20"
+  answer: "₹50,00,000"
+  rule: "total value = down payment / (percent/100)"
+  difficulty: "medium"

@@ -1,0 +1,43 @@
+- template: "What comes next in the sequence: {{a}}, {{b}}, {{c}}, __?"
+  slots:
+    a: "2"
+    b: "6"
+    c: "18"
+  answer: 54
+  rule: "multiply by 3"
+  difficulty: "medium"
+
+- template: "If it is currently {{current}} and a meeting starts in {{hours}} hours and {{minutes}} minutes, what time will the meeting start?"
+  slots:
+    current: "3:45 PM"
+    hours: "2"
+    minutes: "30"
+  answer: "6:15 PM"
+  rule: "time addition"
+  difficulty: "easy"
+
+- template: "A bat and a ball cost {{total}} total. The bat costs {{difference}} more than the ball. How much does the ball cost?"
+  slots:
+    total: "$1.10"
+    difference: "$1.00"
+  answer: "$0.05"
+  rule: "avoid intuitive but incorrect answer"
+  difficulty: "medium"
+
+- template: "If {{machines1}} machines take {{minutes1}} minutes to make {{widgets1}} widgets, how long would {{machines2}} machines take to make {{widgets2}} widgets?"
+  slots:
+    machines1: "5"
+    minutes1: "5"
+    widgets1: "5"
+    machines2: "100"
+    widgets2: "100"
+  answer: 5
+  rule: "rate remains constant per machine"
+  difficulty: "medium"
+
+- template: "In a race, you overtake the person in {{position}} place. What position are you in now?"
+  slots:
+    position: "2nd"
+  answer: "2nd place"
+  rule: "overtaking 2nd places you in 2nd, not 1st"
+  difficulty: "easy"

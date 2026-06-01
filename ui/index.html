@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎙️ Sales Readiness Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #f4f6fc;
+      --navy-primary: #1a237e;
+      --navy-hover: #12185c;
+      --navy-light: #eef2ff;
+      --text-main: #1e293b;
+      --text-muted: #475569;
+      --text-light: #94a3b8;
+      --border-color: #e2e8f0;
+      
+      --badge-green-bg: #ecfdf5;
+      --badge-green-text: #059669;
+      --badge-red-bg: #fef2f2;
+      --badge-red-text: #ef4444;
+      
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* Card Frame */
+    .card {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(71, 85, 105, 0.07), 0 1px 3px rgba(71, 85, 105, 0.03);
+      width: 100%;
+      max-width: 580px;
+      padding: 36px;
+      position: relative;
+      transition: var(--transition-smooth);
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Gear Icon */
+    .settings-toggle {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-light);
+      padding: 8px;
+      border-radius: 50%;
+      transition: var(--transition-smooth);
+      z-index: 10;
+    }
+
+    .settings-toggle:hover {
+      color: var(--text-muted);
+      background-color: #f1f5f9;
+    }
+
+    .settings-toggle svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Floating Dev Toggle Button */
+    .dev-toggle {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      background-color: #0f172a;
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      z-index: 999;
+      transition: var(--transition-smooth);
+      font-size: 16px;
+    }
+
+    .dev-toggle:hover {
+      background-color: #1e293b;
+      transform: scale(1.08) rotate(15deg);
+      border-color: #38bdf8;
+    }
+
+    /* ==========================================================================
+       OBSERVABILITY PANEL (LEFT DRAWER)
+       ========================================================================== */
+    .dev-panel {
+      position: fixed;
+      top: 0;
+      left: -350px;
+      width: 350px;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 1000;
+      transition: var(--transition-smooth);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      color: #f8fafc;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .dev-panel.open {
+      left: 0;
+    }
+
+    .dev-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dev-header h3 {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      color: #38bdf8;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dev-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #94a3b8;
+      padding: 4px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+    }
+
+    .dev-close:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+    }
+
+    .dev-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .dev-section {
+      margin-bottom: 24px;
+    }
+
+    .dev-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      border-left: 2.5px solid #38bdf8;
+      padding-left: 8px;
+    }
+
+    .dev-field {
+      margin-bottom: 8px;
+      font-size: 12.5px;
+    }
+
+    .dev-field-lbl {
+      color: #94a3b8;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .dev-field-val {
+      font-family: monospace;
+      color: #e2e8f0;
+      word-break: break-all;
+    }
+
+    .dev-hint-box {
+      background-color: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .dev-log-row {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      font-size: 11.5px;
+    }
+
+    .dev-status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    
+    .dev-status-indicator.connected {
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.1);
+    }
+
+    /* Screen Transitions */
+    .screen {
+      animation: fadeIn 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ==========================================================================
+       START SCREEN STYLES
+       ========================================================================== */
+    .icon-block {
+      width: 48px;
+      height: 48px;
+      background-color: var(--navy-primary);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 24px;
+      color: #ffffff;
+      font-size: 20px;
+    }
+
+    .label-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #3f51b5;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--navy-primary);
+      margin-bottom: 16px;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .badge-item {
+      background-color: var(--navy-light);
+      color: #3f51b5;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 28px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .input-text {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition-smooth);
+      font-family: var(--font-body);
+    }
+
+    .input-text:focus {
+      border-color: var(--navy-primary);
+      box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background-color: var(--navy-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--navy-hover);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* ==========================================================================
+       SIMULATOR SCREEN STYLES
+       ========================================================================== */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 24px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-left .icon-block-small {
+      width: 32px;
+      height: 32px;
+      background-color: var(--navy-primary);
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+      font-size: 14px;
+    }
+
+    .header-left h2 {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy-primary);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .difficulty-badge {
+      background-color: #e8f7f0;
+      color: var(--badge-green-text);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .speaker-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 4px;
+      padding-left: 56px;
+    }
+
+    .speech-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: flex-start;
+    }
+
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      background-color: var(--navy-primary);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .speech-bubble {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-size: 14px;
+      color: var(--text-main);
+      line-height: 1.5;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01);
+      flex: 1;
+    }
+
+    .choice-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+      margin: 24px 0 14px 0;
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .option-card {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      user-select: none;
+      text-align: left;
+    }
+
+    .option-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      transform: translateY(-1px);
+    }
+
+    .option-card.selected {
+      border-color: var(--navy-primary);
+      background-color: #f7f9ff;
+    }
+
+    .option-card.disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    .option-card.disabled:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: var(--border-color);
+    }
+
+    .option-card.selected.disabled {
+      border-color: var(--navy-primary);
+      background-color: #f7f9ff;
+      opacity: 1;
+    }
+
+    .option-letter {
+      width: 26px;
+      height: 26px;
+      background-color: var(--navy-light);
+      color: #3f51b5;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 700;
+      font-size: 11.5px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .option-card.selected .option-letter {
+      background-color: var(--navy-primary);
+      color: #ffffff;
+    }
+
+    .option-text {
+      font-size: 13.5px;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    /* Live Evaluation feedback */
+    .eval-block {
+      background-color: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eval-score-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .eval-gauge {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy-primary);
+    }
+
+    .eval-status {
+      font-size: 13.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .eval-status.exceptional { color: var(--badge-green-text); }
+    .eval-status.proficient { color: #2563eb; }
+    .eval-status.weak { color: #d97706; }
+    .eval-status.poor { color: var(--badge-red-text); }
+
+    .eval-vague {
+      margin-left: auto;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+      color: var(--badge-red-text);
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 10.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .eval-section {
+      margin-bottom: 14px;
+    }
+
+    .eval-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .eval-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .eval-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .eval-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .eval-tag.covered {
+      background-color: var(--badge-green-bg);
+      color: var(--badge-green-text);
+      border: 1px solid #d1fae5;
+    }
+
+    .eval-tag.missing {
+      background-color: var(--badge-red-bg);
+      color: var(--badge-red-text);
+      border: 1px solid #fee2e2;
+    }
+
+    .eval-tag svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .eval-reasoning {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      font-style: italic;
+      background-color: #ffffff;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border-left: 3px solid #cbd5e1;
+    }
+
+    /* ==========================================================================
+       RESULTS & SUMMARY SCREEN
+       ========================================================================== */
+    .summary-scroll {
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 6px;
+      margin-bottom: 24px;
+    }
+
+    .results-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+
+    .results-gauge-card {
+      background-color: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .results-ring {
+      width: 90px;
+      height: 90px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    .results-ring svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .results-ring .bg-circle {
+      fill: none;
+      stroke: #e2e8f0;
+      stroke-width: 8;
+    }
+
+    .results-ring .fill-circle {
+      fill: none;
+      stroke: var(--navy-primary);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 251.2;
+      stroke-dashoffset: 251.2;
+      transition: stroke-dashoffset 0.8s ease;
+    }
+
+    .results-value {
+      position: absolute;
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy-primary);
+    }
+
+    .results-text-label {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .overall-narrative-card {
+      background-color: var(--navy-light);
+      border: 1px solid rgba(63, 81, 181, 0.12);
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+
+    .overall-narrative-card h4 {
+      font-family: var(--font-heading);
+      font-size: 13.5px;
+      color: #3f51b5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .overall-narrative-card p {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      border-radius: 12px;
+    }
+
+    .breakdown-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .breakdown-meta {
+      font-size: 10.5px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .breakdown-value {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy-primary);
+    }
+
+    /* Accordion Transcript */
+    .accordion {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .accordion-header {
+      background-color: #f8fafc;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .accordion-header svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.2s;
+    }
+
+    .accordion.open .accordion-header svg {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      display: none;
+      background-color: #ffffff;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .accordion.open .accordion-content {
+      display: block;
+    }
+
+    .transcript-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .transcript-item:last-child {
+      border-bottom: none;
+    }
+
+    .transcript-q {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--navy-primary);
+      margin-bottom: 4px;
+    }
+
+    .transcript-a {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      padding-left: 8px;
+      border-left: 2px solid var(--border-color);
+    }
+
+    .transcript-score {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--badge-green-text);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ==========================================================================
+       SETTINGS MODAL OVERLAY
+       ========================================================================== */
+    .settings-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.35);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      border-radius: 24px;
+    }
+
+    .settings-modal {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      animation: modalScale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalScale {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .settings-header h3 {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      color: var(--navy-primary);
+      font-weight: 700;
+    }
+
+    .settings-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-light);
+      padding: 4px;
+      border-radius: 50%;
+    }
+
+    .settings-close:hover {
+      background-color: #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .settings-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-danger {
+      width: 100%;
+      background-color: var(--badge-red-bg);
+      color: var(--badge-red-text);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+    }
+
+    .btn-danger:hover {
+      background-color: #fee2e2;
+    }
+
+    /* Common Spinner/Loading */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ffffff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .spinner-dark {
+      border-color: var(--navy-primary);
+      border-top-color: transparent;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Dev Toggle Button in bottom-left -->
+  <button class="dev-toggle" onclick="toggleDevPanel(true)" title="Open Developer Observability Panel">
+    🛠️
+  </button>
+
+  <!-- ==========================================================================
+       OBSERVABILITY PANEL (LEFT DRAWER)
+       ========================================================================== */ -->
+  <div id="dev-panel" class="dev-panel">
+    <div class="dev-header">
+      <h3>🛠️ Dev Observability Panel</h3>
+      <button class="dev-close" onclick="toggleDevPanel(false)" title="Close dev board">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Active State Tracker -->
+    <div class="dev-section">
+      <div class="dev-title">Session State</div>
+      <div class="dev-field">
+        <div class="dev-field-lbl">Session Status</div>
+        <div id="devStatusBadge" class="dev-status-indicator">OFFLINE</div>
+      </div>
+      <div class="dev-field">
+        <div class="dev-field-lbl">Session ID</div>
+        <div id="devSessionId" class="dev-field-val">Not initialized</div>
+      </div>
+      <div class="dev-field">
+        <div class="dev-field-lbl">Candidate Name</div>
+        <div id="devCandidateName" class="dev-field-val">Guest</div>
+      </div>
+      <div class="dev-field">
+        <div class="dev-field-lbl">Pool Coverage Index</div>
+        <div id="devPoolIndex" class="dev-field-val">0 / 0</div>
+      </div>
+    </div>
+
+    <!-- Observability Scenario Insights -->
+    <div class="dev-section">
+      <div class="dev-title">Scenario Insights (Current)</div>
+      <div class="dev-field">
+        <div class="dev-field-lbl">Question Archetype</div>
+        <div id="devQuestionArchetype" class="dev-field-val">-</div>
+      </div>
+      <div class="dev-field">
+        <div class="dev-field-lbl">Ideal Answer Hint</div>
+        <div id="devQuestionHint" class="dev-hint-box">Select Start to load scenario hints...</div>
+      </div>
+      <div class="dev-field">
+        <div class="dev-field-lbl">Expected Concepts</div>
+        <div id="devQuestionConcepts" class="dev-field-val">-</div>
+      </div>
+    </div>
+
+    <!-- Compiler compilation log -->
+    <div class="dev-section" style="flex: 1; display: flex; flex-direction: column;">
+      <div class="dev-title">Taxonomy Compiler Logs</div>
+      <div id="devLogsContainer" style="flex: 1; overflow-y: auto; max-height: 180px; padding-right: 2px;">
+        <div style="color: #94a3b8; font-style: italic; font-size: 12px;">Initialize a session to view compiler logs.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    
+    <!-- Gear icon to toggle settings overlay (shown on start and summary only) -->
+    <button class="settings-toggle" id="settingsToggleBtn" onclick="toggleSettings(true)" title="Configure simulator settings">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    </button>
+
+    <!-- ==========================================================================
+         START SCREEN
+         ========================================================================== -->
+    <div id="start-screen" class="screen">
+      <div class="icon-block">🏠</div>
+      <div class="label-tag">SALES READINESS ASSESSMENT</div>
+      <h1>Real Estate Sales Simulator</h1>
+      <p class="subtitle">You'll handle 6 real customer conversations. Choose how you respond — there are no trick questions, only judgment calls.</p>
+      
+      <div class="badge-grid">
+        <div class="badge-item">
+          <span>⏱️</span> 8–12 minutes
+        </div>
+        <div class="badge-item">
+          <span>💬</span> 6 scenarios
+        </div>
+        <div class="badge-item">
+          <span>📊</span> Live scoring
+        </div>
+        <div class="badge-item">
+          <span>🎯</span> 4 competencies
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userName">Your name (optional)</label>
+        <input type="text" id="userName" class="input-text" placeholder="Enter your name..." autocomplete="name">
+      </div>
+
+      <button id="startBtn" class="btn-primary" onclick="startInterview()">
+        Start Assessment
+      </button>
+    </div>
+
+    <!-- ==========================================================================
+         SIMULATOR SCREEN
+         ========================================================================== -->
+    <div id="simulator-screen" class="screen hidden">
+      <div class="card-header">
+        <div class="header-left">
+          <div class="icon-block-small">💬</div>
+          <h2 id="simDomainTitle">Sales Assessment</h2>
+        </div>
+        <div class="header-right">
+          <span id="simDifficulty" class="difficulty-badge">easy</span>
+          <span id="simProgress" class="progress-text">1 / 6</span>
+        </div>
+      </div>
+
+      <!-- Dialogue / Question -->
+      <div class="speaker-meta" id="simSpeakerName">Priya</div>
+      <div class="speech-row">
+        <div class="avatar-circle" id="simSpeakerAvatar">PK</div>
+        <div class="speech-bubble" id="simQuestionText">
+          Hi, I saw your project listing online. Can you tell me a bit about the apartments here?
+        </div>
+      </div>
+
+      <div class="choice-title">CHOOSE YOUR RESPONSE</div>
+
+      <!-- Option Cards -->
+      <div class="option-list" id="simOptionsContainer">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- AI Evaluation Feedback -->
+      <div id="simEvalBlock" class="eval-block hidden">
+        <div class="eval-score-row">
+          <div class="eval-gauge" id="evalScoreVal">4/5</div>
+          <div>
+            <div class="eval-status proficient" id="evalStatusText">Proficient</div>
+          </div>
+          <div class="eval-vague hidden" id="evalVagueBadge">
+            ⚠ Vague Response
+          </div>
+        </div>
+
+        <div class="eval-section" id="evalCoveredSection">
+          <div class="eval-section-title">Demonstrated Concepts</div>
+          <div class="eval-tags" id="evalCoveredTags">
+            <!-- Tags rendered dynamically -->
+          </div>
+        </div>
+
+        <div class="eval-section" id="evalMissingSection">
+          <div class="eval-section-title">Missed Opportunities</div>
+          <div class="eval-tags" id="evalMissingTags">
+            <!-- Tags rendered dynamically -->
+          </div>
+        </div>
+
+        <div class="eval-section" id="evalReasoningSection">
+          <div class="eval-section-title">Evaluator Reasoning</div>
+          <div class="eval-reasoning" id="evalReasoningText">
+            The candidate responded very professionally and answered with appropriate details.
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Action Button -->
+      <button id="nextBtn" class="btn-primary hidden" onclick="nextQuestion()">
+        Next Scenario
+      </button>
+    </div>
+
+    <!-- ==========================================================================
+         RESULTS & SUMMARY SCREEN
+         ========================================================================== -->
+    <div id="summary-screen" class="screen hidden">
+      <div class="icon-block" style="background-color: #2e7d32;">🏆</div>
+      <div class="label-tag" style="color: #2e7d32;">ASSESSMENT COMPLETE</div>
+      <h1>Performance Report</h1>
+      
+      <div class="summary-scroll">
+        <div class="results-row">
+          <div class="results-gauge-card">
+            <div class="results-ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="bg-circle" cx="50" cy="50" r="40" />
+                <circle id="summaryGaugeFill" class="fill-circle" cx="50" cy="50" r="40" />
+              </svg>
+              <div id="summaryGaugeVal" class="results-value">4.2</div>
+            </div>
+            <div class="results-text-label">Overall Score</div>
+          </div>
+          <div>
+            <h3 id="summaryCandidateName" style="font-family: var(--font-heading); font-size: 20px; color: var(--navy-primary); margin-bottom: 4px;">Faraz</h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;">You completed the Sales Readiness Assessment with solid analytical and communication skills.</p>
+          </div>
+        </div>
+
+        <div class="overall-narrative-card hidden" id="summaryNarrativeCard">
+          <h4>Narrative Assessment</h4>
+          <p id="summaryNarrativeText"></p>
+        </div>
+
+        <div class="eval-section-title" style="margin-bottom: 10px;">Taxonomy Competency Breakdown</div>
+        <div class="breakdown-list" id="summaryBreakdownContainer">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Collapsible Transcript -->
+        <div class="accordion" id="transcriptAccordion">
+          <div class="accordion-header" onclick="toggleAccordion()">
+            <span>Review Full Response Transcript</span>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+          <div class="accordion-content">
+            <div id="summaryTranscriptContainer">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="restartInterview()">
+        Restart Simulator
+      </button>
+    </div>
+
+    <!-- ==========================================================================
+         SETTINGS MODAL OVERLAY
+         ========================================================================== -->
+    <div id="settings-overlay" class="settings-overlay hidden">
+      <div class="settings-modal">
+        <div class="settings-header">
+          <h3>Simulator Settings</h3>
+          <button class="settings-close" onclick="toggleSettings(false)" title="Close settings">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="font-size: 12px;">Server Endpoint URL</label>
+          <input id="serverUrl" class="input-text" style="margin-bottom: 0;" value="http://localhost:9090">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label class="form-label" style="font-size: 12px;">Taxonomy Domain Config</label>
+          <input id="domainConfig" class="input-text" style="margin-bottom: 0;" value="domains/real_estate_readiness.yaml">
+        </div>
+
+        <button class="btn-primary" style="padding: 12px; font-size: 14px;" onclick="toggleSettings(false)">
+          Apply Settings
+        </button>
+
+        <button id="stopBtn" class="btn-danger hidden" onclick="forceAbortInterview()">
+          <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          Force Abort Assessment
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let state = {
+      sessionId: null,
+      currentQuestion: null,
+      pool: [],
+      history: [],
+      running: false,
+      interviewDone: false,
+      askedCount: 0,
+      candidateName: ""
+    };
+
+    const CUSTOMER_PEOPLE = [
+      { name: "Priya Kapoor", initials: "PK" },
+      { name: "Rohan Mehta", initials: "RM" },
+      { name: "Sarah Jenkins", initials: "SJ" },
+      { name: "Amit Sharma", initials: "AS" },
+      { name: "Deepak Rao", initials: "DR" },
+      { name: "Jessica Taylor", initials: "JT" }
+    ];
+
+    function $(id) { return document.getElementById(id); }
+
+    function toggleSettings(show) {
+      const overlay = $('settings-overlay');
+      if (show) {
+        overlay.classList.remove('hidden');
+      } else {
+        overlay.classList.add('hidden');
+      }
+    }
+
+    function toggleDevPanel(open) {
+      const panel = $('dev-panel');
+      if (open) {
+        panel.classList.add('open');
+      } else {
+        panel.classList.remove('open');
+      }
+    }
+
+    function toggleAccordion() {
+      const accordion = $('transcriptAccordion');
+      accordion.classList.toggle('open');
+    }
+
+    function getCustomer(q, index) {
+      if (q && q.persona) {
+        const name = q.persona.name || q.persona.role;
+        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        return { name, initials };
+      }
+      return CUSTOMER_PEOPLE[index % CUSTOMER_PEOPLE.length];
+    }
+
+    function escapeHtml(text) {
+      const d = document.createElement('div');
+      d.textContent = text;
+      return d.innerHTML;
+    }
+
+    // Call REST endpoints
+    function api(method, path, body) {
+      const url = $('serverUrl').value.replace(/\/+$/, '') + path;
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.timeout = 180000;
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try { resolve(JSON.parse(xhr.responseText)); }
+            catch(e) { reject(new Error('Invalid response JSON: ' + xhr.responseText.slice(0,200))); }
+          } else {
+            let msg = `HTTP ${xhr.status}`;
+            try { const d = JSON.parse(xhr.responseText); msg = d.error || msg; } catch(e) {}
+            reject(new Error(msg));
+          }
+        };
+        xhr.onerror = () => reject(new Error('Network error — check if Go server is running?'));
+        xhr.ontimeout = () => reject(new Error('Request timed out'));
+        xhr.send(body ? JSON.stringify(body) : null);
+      });
+    }
+
+    // Start a new Assessment
+    async function startInterview() {
+      const startBtn = $('startBtn');
+      const nameInput = $('userName');
+      state.candidateName = nameInput.value.trim() || "Guest Candidate";
+
+      startBtn.disabled = true;
+      startBtn.innerHTML = `<span class="spinner"></span> Initializing...`;
+
+      // Update Observability Panel
+      $('devCandidateName').textContent = state.candidateName;
+      $('devStatusBadge').textContent = 'INITIALIZING';
+      $('devStatusBadge').className = 'dev-status-indicator';
+
+      try {
+        const data = await api('POST', '/sessions/init', { domain_config_path: $('domainConfig').value });
+        
+        state.sessionId = data.session_id;
+        state.pool = data.pool;
+        state.history = [];
+        state.askedCount = 1;
+        state.running = true;
+        state.interviewDone = false;
+        
+        $('start-screen').classList.add('hidden');
+        $('simulator-screen').classList.remove('hidden');
+        
+        // Hide configuration settings gear during play
+        $('settingsToggleBtn').classList.add('hidden');
+        $('stopBtn').classList.remove('hidden');
+
+        // Populate Observability Panel Logs
+        $('devSessionId').textContent = data.session_id;
+        $('devStatusBadge').textContent = 'ACTIVE PLAY';
+        $('devStatusBadge').className = 'dev-status-indicator connected';
+        
+        // Render logs
+        const logsContainer = $('devLogsContainer');
+        logsContainer.innerHTML = '';
+        if (data.generation_log && data.generation_log.length > 0) {
+          data.generation_log.forEach(log => {
+            const shortPath = log.node_path.split('.').pop();
+            const color = log.error ? '#f87171' : '#34d399';
+            logsContainer.innerHTML += `
+              <div class="dev-log-row">
+                <strong style="color: #38bdf8; text-transform: capitalize;">${shortPath}</strong> (${log.archetype})<br/>
+                <span style="color: ${color}; font-size: 10.5px;">${log.error ? '⚠ ' + log.error : '✔ ' + log.count + ' questions generated'}</span>
+              </div>
+            `;
+          });
+        }
+
+        renderQuestion(data.first_question);
+      } catch (err) {
+        alert('Failed to initialize session: ' + err.message);
+        startBtn.disabled = false;
+        startBtn.innerHTML = `Start Assessment`;
+        $('devStatusBadge').textContent = 'OFFLINE';
+        $('devStatusBadge').className = 'dev-status-indicator';
+      }
+    }
+
+    // Render current question
+    function renderQuestion(q) {
+      if (!q) return;
+      state.currentQuestion = q;
+
+      // Header progress & difficulty
+      $('simDifficulty').textContent = q.difficulty || "medium";
+      
+      const totalCount = state.pool.length > 0 ? state.pool.length : 6;
+      $('simProgress').textContent = `${state.askedCount} / ${totalCount}`;
+
+      // Customer avatar details
+      const customer = getCustomer(q, state.askedCount - 1);
+      $('simSpeakerName').textContent = customer.name;
+      $('simSpeakerAvatar').textContent = customer.initials;
+      $('simQuestionText').textContent = q.text;
+
+      // Update Observability Scenario Insights in dev board
+      $('devQuestionArchetype').textContent = q.archetype;
+      $('devQuestionHint').textContent = q.ideal_answer_hint || "None provided";
+      $('devQuestionConcepts').textContent = (q.expected_concepts || []).join(', ') || "None";
+      $('devPoolIndex').textContent = `${state.askedCount} / ${totalCount}`;
+
+      // Clear previous evaluations & selection states
+      $('simEvalBlock').classList.add('hidden');
+      $('nextBtn').classList.add('hidden');
+
+      // Render Dynamic Options
+      const optionsContainer = $('simOptionsContainer');
+      optionsContainer.innerHTML = '';
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const choices = q.options || [
+        "Yes, stamp duty is a state government charge that must be paid.",
+        "Of course, we can discuss our project and check available 2 and 3 BHK units.",
+        "Let me send the brochure right now to review.",
+        "Let's schedule a physical site visit to inspect the units in person."
+      ];
+
+      choices.forEach((choice, index) => {
+        const optionCard = document.createElement('div');
+        optionCard.className = 'option-card';
+        optionCard.innerHTML = `
+          <div class="option-letter">${letters[index]}</div>
+          <div class="option-text">${escapeHtml(choice)}</div>
+        `;
+        optionCard.onclick = () => selectOption(optionCard, choice);
+        optionsContainer.appendChild(optionCard);
+      });
+    }
+
+    // Handle Option Selection
+    async function selectOption(selectedCard, answerText) {
+      // Avoid multiple selections
+      if ($('nextBtn').classList.contains('hidden') === false) return;
+
+      // Add selection style
+      const cards = document.querySelectorAll('.option-card');
+      cards.forEach(c => {
+        c.classList.add('disabled');
+        if (c === selectedCard) {
+          c.classList.add('selected');
+        }
+      });
+
+      // Show temporary analyzing loader
+      selectedCard.innerHTML = `
+        <div class="option-letter"><span class="spinner spinner-dark" style="width:10px; height:10px;"></span></div>
+        <div class="option-text" style="font-weight:600; color: var(--navy-primary);">Analyzing response...</div>
+      `;
+
+      try {
+        const data = await api('POST', `/sessions/${state.sessionId}/turn`, { answer: answerText });
+        
+        // Restore card state
+        const letterIndex = Array.from(cards).indexOf(selectedCard);
+        const letters = ['A', 'B', 'C', 'D'];
+        selectedCard.innerHTML = `
+          <div class="option-letter">${letters[letterIndex]}</div>
+          <div class="option-text">${escapeHtml(answerText)}</div>
+        `;
+
+        const evalResult = data.eval_result || {};
+        state.history.push({ question: state.currentQuestion, answer: answerText, eval: evalResult });
+
+        // Update state
+        state.interviewDone = data.interview_done;
+        state.currentQuestion = data.next_question || null;
+
+        // Render AI Evaluator Panel
+        renderEvaluation(evalResult);
+
+        // Show proceed action button
+        const nextBtn = $('nextBtn');
+        nextBtn.classList.remove('hidden');
+        if (state.interviewDone || !state.currentQuestion) {
+          nextBtn.textContent = "View Performance Report 📊";
+        } else {
+          nextBtn.textContent = "Next Scenario";
+        }
+      } catch (err) {
+        alert('Communication Error: ' + err.message);
+        cards.forEach(c => c.classList.remove('disabled'));
+      }
+    }
+
+    // Render AI Evaluation panel
+    function renderEvaluation(d) {
+      const score = d.score || 0;
+      let scoreClass = 'proficient';
+      let scoreText = 'Proficient';
+
+      if (score >= 5) {
+        scoreClass = 'exceptional';
+        scoreText = 'Exceptional';
+      } else if (score === 4) {
+        scoreClass = 'proficient';
+        scoreText = 'Proficient';
+      } else if (score === 3) {
+        scoreClass = 'weak';
+        scoreText = 'Adequate';
+      } else {
+        scoreClass = 'poor';
+        scoreText = 'Needs Work';
+      }
+
+      $('evalScoreVal').textContent = `${score} / 5`;
+      
+      const statusEl = $('evalStatusText');
+      statusEl.className = 'eval-status ' + scoreClass;
+      statusEl.textContent = scoreText;
+
+      // Vague badge
+      if (d.vague_flag) {
+        $('evalVagueBadge').classList.remove('hidden');
+      } else {
+        $('evalVagueBadge').classList.add('hidden');
+      }
+
+      // Render Covered Concepts
+      const coveredSection = $('evalCoveredSection');
+      const coveredContainer = $('evalCoveredTags');
+      coveredContainer.innerHTML = '';
+      if (d.concepts_covered && d.concepts_covered.length > 0) {
+        coveredSection.classList.remove('hidden');
+        d.concepts_covered.forEach(c => {
+          coveredContainer.innerHTML += `
+            <span class="eval-tag covered">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M5 13l4 4L19 7" /></svg>
+              ${escapeHtml(c)}
+            </span>
+          `;
+        });
+      } else {
+        coveredSection.classList.add('hidden');
+      }
+
+      // Render Missing Opportunities
+      const missingSection = $('evalMissingSection');
+      const missingContainer = $('evalMissingTags');
+      missingContainer.innerHTML = '';
+      if (d.missing && d.missing.length > 0) {
+        missingSection.classList.remove('hidden');
+        d.missing.forEach(c => {
+          missingContainer.innerHTML += `
+            <span class="eval-tag missing">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M6 18L18 6M6 6l12 12" /></svg>
+              ${escapeHtml(c)}
+            </span>
+          `;
+        });
+      } else {
+        missingSection.classList.add('hidden');
+      }
+
+      // Evaluator Reasoning
+      const reasoningSection = $('evalReasoningSection');
+      if (d.reasoning) {
+        reasoningSection.classList.remove('hidden');
+        $('evalReasoningText').textContent = d.reasoning;
+      } else {
+        reasoningSection.classList.add('hidden');
+      }
+
+      $('simEvalBlock').classList.remove('hidden');
+    }
+
+    // Proceed to next screen
+    function nextQuestion() {
+      if (state.interviewDone || !state.currentQuestion) {
+        $('simulator-screen').classList.add('hidden');
+        showSummaryScreen();
+      } else {
+        state.askedCount++;
+        renderQuestion(state.currentQuestion);
+      }
+    }
+
+    // Show final summary report screen
+    async function showSummaryScreen() {
+      const summaryScreen = $('summary-screen');
+      summaryScreen.classList.remove('hidden');
+      $('stopBtn').classList.add('hidden');
+      
+      // Restore configuration gear visibility
+      $('settingsToggleBtn').classList.remove('hidden');
+      $('devStatusBadge').textContent = 'COMPLETED';
+
+      try {
+        const data = await api('GET', `/sessions/${state.sessionId}/summary?include_narrative=true`);
+        
+        // Populate Gauge
+        const score = data.overall || 0;
+        $('summaryGaugeVal').textContent = score.toFixed(1);
+        
+        // Calculate stroke offset
+        const offset = 251.2 - (251.2 * score) / 5;
+        $('summaryGaugeFill').style.strokeDashoffset = offset;
+
+        // Names
+        $('summaryCandidateName').textContent = state.candidateName;
+
+        // Narrative
+        if (data.narrative) {
+          $('summaryNarrativeCard').classList.remove('hidden');
+          $('summaryNarrativeText').textContent = data.narrative;
+        } else {
+          $('summaryNarrativeCard').classList.add('hidden');
+        }
+
+        // Leaf breakdown scores
+        const container = $('summaryBreakdownContainer');
+        container.innerHTML = '';
+        if (data.leaf_scores) {
+          for (const [key, value] of Object.entries(data.leaf_scores)) {
+            const shortName = key.split('.').pop().replace(/_/g, ' ');
+            container.innerHTML += `
+              <div class="breakdown-row">
+                <div>
+                  <div class="breakdown-name" style="text-transform: capitalize;">${escapeHtml(shortName)}</div>
+                  <div class="breakdown-meta">${value.count} scenario evaluated</div>
+                </div>
+                <div class="breakdown-value">${value.average.toFixed(1)} <span style="font-size:11px; font-weight:500; color:var(--text-light);">/5</span></div>
+              </div>
+            `;
+          }
+        }
+
+        // Render Accordion transcript list
+        const transcriptContainer = $('summaryTranscriptContainer');
+        transcriptContainer.innerHTML = '';
+        if (data.transcript && data.transcript.length > 0) {
+          data.transcript.forEach((t, i) => {
+            transcriptContainer.innerHTML += `
+              <div class="transcript-item">
+                <div class="transcript-q">Scenario #${i+1}: ${escapeHtml(t.question)}</div>
+                <div class="transcript-a">Your Response: ${escapeHtml(t.answer)}</div>
+                <div class="transcript-score">
+                  <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                  Score: ${t.score} / 5
+                </div>
+              </div>
+            `;
+          });
+        }
+      } catch (err) {
+        alert('Failed to load performance summary: ' + err.message);
+      }
+    }
+
+    // Restart simulator
+    function restartInterview() {
+      $('summary-screen').classList.add('hidden');
+      $('start-screen').classList.remove('hidden');
+      
+      // Make settings toggle button visible again on start screen
+      $('settingsToggleBtn').classList.remove('hidden');
+
+      $('userName').value = state.candidateName === "Guest Candidate" ? "" : state.candidateName;
+      $('startBtn').disabled = false;
+      $('startBtn').innerHTML = `Start Assessment`;
+
+      // Reset Dev Observability
+      $('devCandidateName').textContent = 'Guest';
+      $('devStatusBadge').textContent = 'OFFLINE';
+      $('devStatusBadge').className = 'dev-status-indicator';
+      $('devSessionId').textContent = 'Not initialized';
+      $('devPoolIndex').textContent = '0 / 0';
+      $('devQuestionArchetype').textContent = '-';
+      $('devQuestionHint').textContent = 'Select Start to load scenario hints...';
+      $('devQuestionConcepts').textContent = '-';
+      $('devLogsContainer').innerHTML = `<div style="color: #94a3b8; font-style: italic; font-size: 12px;">Initialize a session to view compiler logs.</div>`;
+
+      state = {
+        sessionId: null,
+        currentQuestion: null,
+        pool: [],
+        history: [],
+        running: false,
+        interviewDone: false,
+        askedCount: 0,
+        candidateName: ""
+      };
+    }
+
+    // Force abort
+    async function forceAbortInterview() {
+      if (!confirm('Are you sure you want to forcefully abort this assessment? Progress will be lost.')) return;
+      toggleSettings(false);
+      restartInterview();
+    }
+  </script>
+</body>
+</html>
