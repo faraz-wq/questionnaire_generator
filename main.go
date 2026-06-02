@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/faraz/questionnaire_generator/config"
 	"github.com/faraz/questionnaire_generator/evaluator"
@@ -49,6 +50,9 @@ func main() {
 	r.POST("/sessions/init", h.InitSession)
 	r.POST("/sessions/:id/turn", h.ProcessTurn)
 	r.GET("/sessions/:id/summary", h.GetSummary)
+	r.GET("/env", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"env": cfg.Env})
+	})
 
 	r.Static("/ui", "./ui")
 	r.GET("/", func(c *gin.Context) {

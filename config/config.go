@@ -9,6 +9,7 @@ import (
 )
 
 type Config struct {
+	Env                string
 	LLMProvider        string
 	GeminiModel        string
 	GeminiAPIKey       string
@@ -28,6 +29,7 @@ func Load() (*Config, error) {
 	_ = godotenv.Load()
 
 	cfg := &Config{
+		Env:                getEnv("ENV", "PROD"),
 		LLMProvider:        getEnv("LLM_PROVIDER", "ollama"),
 		GeminiModel:        getEnv("GEMINI_MODEL", "gemini-1.5-flash"),
 		GeminiAPIKey:       os.Getenv("GEMINI_API_KEY"),

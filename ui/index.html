@@ -1063,7 +1063,7 @@
 <body>
 
   <!-- Floating Dev Toggle Button in bottom-left -->
-  <button class="dev-toggle" onclick="toggleDevPanel(true)" title="Open Developer Observability Panel">
+  <button class="dev-toggle hidden" id="devToggleBtn" onclick="toggleDevPanel(true)" title="Open Developer Observability Panel">
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1138,7 +1138,7 @@
   <div class="card">
     
     <!-- Gear icon to toggle settings overlay (shown on start and summary only) -->
-    <button class="settings-toggle" id="settingsToggleBtn" onclick="toggleSettings(true)" title="Configure simulator settings">
+    <button class="settings-toggle hidden" id="settingsToggleBtn" onclick="toggleSettings(true)" title="Configure simulator settings">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1183,9 +1183,9 @@
           </div>
           <div style="display: flex; align-items: center; gap: 6px;">
             <button type="button" class="counter-btn" onclick="adjustCount('countQuestions', -1)" id="btnDecQuestions" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">−</button>
-            <span id="lblQuestions" style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary); width: 12px; text-align: center; display: inline-block;">6</span>
+            <span id="lblQuestions" style="font-size: 11.5px; font-weight: 700; color: var(--navy-primary); width: 12px; text-align: center; display: inline-block;">10</span>
             <button type="button" class="counter-btn" onclick="adjustCount('countQuestions', 1)" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: var(--transition-smooth); font-weight: bold; font-size: 10px;">+</button>
-            <input type="hidden" id="countQuestions" value="6">
+            <input type="hidden" id="countQuestions" value="10">
           </div>
         </div>
 
@@ -1478,6 +1478,73 @@
         } else {
           decBtn.style.opacity = '1';
           decBtn.style.cursor = 'pointer';
+        }
+      }
+
+      // Synchronize and validate counts
+      if (inputId === 'countQuestions') {
+        redistributeQuestions(val);
+      } else {
+        updateTotalsAndSum();
+      }
+    }
+
+    // Redistribute total questions equally among the 5 categories
+    function redistributeQuestions(totalVal) {
+      const types = ['countKnowledge', 'countReasoning', 'countSituational', 'countBehavioural', 'countCase'];
+      const base = Math.floor(totalVal / types.length);
+      const rem = totalVal % types.length;
+
+      types.forEach((typeId, idx) => {
+        const subVal = base + (idx < rem ? 1 : 0);
+        const input = $(typeId);
+        if (input) {
+          input.value = subVal;
+          
+          // Update Label
+          const labelId = 'lbl' + typeId.replace('count', '');
+          const label = $(labelId);
+          if (label) {
+            label.textContent = subVal;
+            label.style.color = (subVal === 0) ? '#ef4444' : 'var(--navy-primary)';
+          }
+
+          // Update Decrement Button
+          const decBtnId = 'btnDec' + typeId.replace('count', '');
+          const decBtn = $(decBtnId);
+          if (decBtn) {
+            if (subVal === 0) {
+              decBtn.style.opacity = '0.4';
+              decBtn.style.cursor = 'not-allowed';
+            } else {
+              decBtn.style.opacity = '1';
+              decBtn.style.cursor = 'pointer';
+            }
+          }
+        }
+      });
+    }
+
+    // Sum all categories and update the total questions counter
+    function updateTotalsAndSum() {
+      const sum = (parseInt($('countKnowledge').value) || 0) +
+                  (parseInt($('countReasoning').value) || 0) +
+                  (parseInt($('countSituational').value) || 0) +
+                  (parseInt($('countBehavioural').value) || 0) +
+                  (parseInt($('countCase').value) || 0);
+      
+      $('countQuestions').value = sum;
+      $('lblQuestions').textContent = sum;
+
+      // Update total questions decrement button state
+      const btnDec = $('btnDecQuestions');
+      if (btnDec) {
+        if (sum <= 1) {
+          btnDec.style.opacity = '0.4';
+          btnDec.style.cursor = 'not-allowed';
+        } else {
+          btnDec.style.opacity = '1';
+          btnDec.style.cursor = 'pointer';
         }
       }
     }
@@ -1969,6 +2036,24 @@
       toggleSettings(false);
       restartInterview();
     }
+
+    // Check environment on load to show/hide debug panel and gear settings icon
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const data = await api('GET', '/env');
+        if (data.env === 'DEV') {
+          // Show gear settings toggle button
+          const settingsBtn = $('settingsToggleBtn');
+          if (settingsBtn) settingsBtn.classList.remove('hidden');
+          
+          // Show debug observability toggle button
+          const devBtn = $('devToggleBtn');
+          if (devBtn) devBtn.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.warn("Failed to check environment config:", err);
+      }
+    });
   </script>
 </body>
 </html>
