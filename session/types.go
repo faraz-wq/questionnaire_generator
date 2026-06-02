@@ -67,6 +67,7 @@ type SessionState struct {
 	GenerationLog   []GenerationLogEntry  `json:"generation_log"`
 	AskedTotal      int                   `json:"asked_total"`
 	FollowUpDepth   int                   `json:"follow_up_depth"`
+	LimitTotal      int                   `json:"limit_total"`
 }
 
 func (q *Question) Clone() *Question {
@@ -135,6 +136,7 @@ func (s *SessionState) Clone() *SessionState {
 		FrameworkPrompt: s.FrameworkPrompt,
 		AskedTotal:      s.AskedTotal,
 		FollowUpDepth:   s.FollowUpDepth,
+		LimitTotal:      s.LimitTotal,
 	}
 
 	if s.Pool != nil {
@@ -164,20 +166,7 @@ func (s *SessionState) Clone() *SessionState {
 	}
 
 	if s.Coverage != nil {
-		clone.Coverage = &CoverageData{
-			LeafScores:  make(map[string]float64, len(s.Coverage.LeafScores)),
-			LeafCounts:  make(map[string]int, len(s.Coverage.LeafCounts)),
-			NodeWeights: make(map[string]float64, len(s.Coverage.NodeWeights)),
-		}
-		for k, v := range s.Coverage.LeafScores {
-			clone.Coverage.LeafScores[k] = v
-		}
-		for k, v := range s.Coverage.LeafCounts {
-			clone.Coverage.LeafCounts[k] = v
-		}
-		for k, v := range s.Coverage.NodeWeights {
-			clone.Coverage.NodeWeights[k] = v
-		}
+		clone.Coverage = s.Coverage.Clone()
 	}
 
 	if s.CurrentQuestion != nil {
@@ -196,6 +185,27 @@ type CoverageData struct {
 	LeafScores   map[string]float64 `json:"leaf_scores"`
 	LeafCounts   map[string]int     `json:"leaf_counts"`
 	NodeWeights  map[string]float64 `json:"node_weights"`
+}
+
+func (c *CoverageData) Clone() *CoverageData {
+	if c == nil {
+		return nil
+	}
+	clone := &CoverageData{
+		LeafScores:  make(map[string]float64, len(c.LeafScores)),
+		LeafCounts:  make(map[string]int, len(c.LeafCounts)),
+		NodeWeights: make(map[string]float64, len(c.NodeWeights)),
+	}
+	for k, v := range c.LeafScores {
+		clone.LeafScores[k] = v
+	}
+	for k, v := range c.LeafCounts {
+		clone.LeafCounts[k] = v
+	}
+	for k, v := range c.NodeWeights {
+		clone.NodeWeights[k] = v
+	}
+	return clone
 }
 
 func NewCoverage(leafIDs []string) *CoverageData {

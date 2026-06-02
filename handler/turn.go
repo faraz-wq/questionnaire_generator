@@ -104,7 +104,12 @@ func (h *Handler) ProcessTurn(c *gin.Context) {
 	var nextQ *session.Question
 	followUpFired := false
 
-	if state.AskedTotal >= 6 {
+	limitTotal := state.LimitTotal
+	if limitTotal <= 0 {
+		limitTotal = 6
+	}
+
+	if state.AskedTotal >= limitTotal {
 		nextQ = nil
 		state.FollowUpDepth = 0
 	} else {

@@ -35,7 +35,7 @@ func main() {
 	dispatcher.Register("KnowledgeGenerator", generator.NewKnowledgeGenerator(client, cfg.MaxKnowledgeTokens[cfg.LLMProvider]))
 	dispatcher.Register("ReasoningGenerator", generator.NewReasoningGenerator("templates/reasoning"))
 	dispatcher.Register("SituationalGenerator", generator.NewSituationalGenerator(client, "templates/situational", nil))
-	dispatcher.Register("BehaviouralGenerator", generator.NewBehaviouralGenerator())
+	dispatcher.Register("BehaviouralGenerator", generator.NewBehaviouralGenerator(client))
 	dispatcher.Register("CaseGenerator", generator.NewCaseGenerator(client))
 
 	eval := evaluator.NewEvaluator(client, logger)

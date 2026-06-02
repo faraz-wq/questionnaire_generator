@@ -74,8 +74,13 @@ Difficulty: %s
 Please generate 4 distinct, highly realistic multiple-choice options along with a feedback array explaining why each choice is correct or incorrect:
 1. ONE option must be the **CORRECT and EXCEPTIONAL** response (representing 5/5 score). It must perfectly cover the expected concepts, be factually accurate, and legally/mathematically compliant.
 2. THREE options must be **WRONG / INCORRECT** distractors (representing 1/5 or 2/5 score).
-   - They should look highly realistic and professional to a layperson, but contain subtle factual errors, compliance risks (e.g. violating RERA, wrong TDS threshold, misrepresenting stamp duty), bad customer handling, or sub-optimal math.
-   - Do NOT make the wrong answers outrightly or cartoonishly obvious. They must be plausible distractors that require active thinking to spot.
+   - You are STRICTLY FORBIDDEN from including "obviously bad," generic, or cartoonishly wrong distractors. They must look highly realistic, professional, and authoritative.
+   - The 3 wrong distractors must be context-dependent. Dynamically choose and tailor flaws from the following types based on what naturally fits the specific question context and archetype:
+     * Subtle Mathematical/Numeric Flaws: (e.g. calculation errors using gross yield instead of net yield, wrong percentages, or confident incorrect numbers) for factual/reasoning questions.
+     * Subtle Legal/RERA Compliance Flaws: (e.g. in-progress registration advertising, incorrect society registration parameters, or timeline distortions) for compliance/process questions.
+     * Ethical, Professional Process, or Relationship Flaws: (e.g. agreeing to temporarily hide a pending litigation case to secure a token deposit) for behavioral/situational questions.
+   - The distractors must be extremely convincing and authoritative, looking like perfectly correct answers to a layperson or a mid-level sales agent at first glance.
+   - The flaw must be a highly subtle, realistic, and non-obvious "trap" (e.g. using common industry misconceptions, near-correct regulatory assumptions, or persuasive sales pitches that hide a critical underlying regulatory or factual loophole).
 3. For each of the 4 generated options, provide a clear, concise feedback sentence explaining exactly why it is correct or incorrect in the "feedbacks" array at the same index.
 
 CRITICAL PRECISION REQUIREMENTS:
@@ -85,7 +90,14 @@ CRITICAL PRECISION REQUIREMENTS:
 - **FOR CONVERSATIONAL, SITUATIONAL, OR BEHAVIORAL SCENARIOS**:
   - The options should be written in first-person as a real estate agent's conversational dialogue response to the customer (detailed and realistic).
 - Shuffle which index (0, 1, 2, or 3) contains the correct response.
-- Output ONLY a valid JSON object matching the following schema. Do NOT wrap the JSON in markdown code blocks like `+"```json"+` or `+"```"+`. Do not include any extra conversational text.
+
+[SELF-CORRECTION LOOP]
+Review the 3 generated distractors before outputing the final JSON. For each option:
+1. Does it sound like a real answer that a confident, mid-level sales agent would say? (If no, rewrite to sound more professional).
+2. Is the flaw absolutely undeniable and factually incorrect upon close expert inspection? (If it's arguable or subjective, replace it with an objective compliance, RERA, or mathematical error).
+3. Ensure that correct_index points EXACTLY to the single correct option.
+
+Output ONLY a valid JSON object matching the following schema. Do NOT wrap the JSON in markdown code blocks like `+"```json"+` or `+"```"+`. Do not include any extra conversational text.
 
 Schema format:
 {

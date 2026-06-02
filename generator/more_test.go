@@ -2,6 +2,7 @@ package generator
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/faraz/questionnaire_generator/llm"
@@ -9,7 +10,7 @@ import (
 )
 
 func TestBehaviouralGenerator(t *testing.T) {
-	bg := NewBehaviouralGenerator()
+	bg := NewBehaviouralGenerator(nil)
 
 	input := GeneratorInput{
 		Task: utils.GeneratorTask{
@@ -45,7 +46,7 @@ func TestBehaviouralGenerator(t *testing.T) {
 }
 
 func TestBehaviouralGeneratorEmptyCompetencies(t *testing.T) {
-	bg := NewBehaviouralGenerator()
+	bg := NewBehaviouralGenerator(nil)
 
 	input := GeneratorInput{
 		Task: utils.GeneratorTask{
@@ -94,5 +95,40 @@ func TestCaseGenerator(t *testing.T) {
 
 	if questions[0].Archetype != "case" {
 		t.Errorf("expected archetype case (from task), got %s", questions[0].Archetype)
+	}
+}
+
+func TestBehaviouralGeneratorRealEstateFallback(t *testing.T) {
+	bg := NewBehaviouralGenerator(nil)
+
+	input := GeneratorInput{
+		Task: utils.GeneratorTask{
+			Archetype:     "behavioural",
+			Source:        "star",
+			NodePath:      "test.behavioural",
+			NodeLabelPath: []string{"Test", "Behavioural"},
+			Count:         2,
+		},
+		Competencies: []string{"handling customer objections", "negotiating property deals"},
+	}
+
+	questions, err := bg.Generate(context.Background(), input)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if len(questions) != 2 {
+		t.Fatalf("expected 2 questions, got %d", len(questions))
+	}
+
+	expectedTexts := []string{
+		"Tell me about a challenging situation where you had to handle tough customer objections regarding a property's pricing",
+		"Describe a complex property deal negotiation where there was a major gap between the buyer's budget and the seller's expectations",
+	}
+
+	for i, q := range questions {
+		if !strings.Contains(q.Text, expectedTexts[i]) {
+			t.Errorf("question %d: expected text to contain %q, got %q", i, expectedTexts[i], q.Text)
+		}
 	}
 }

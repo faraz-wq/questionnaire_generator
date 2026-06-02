@@ -16,7 +16,8 @@ Context:
 
 Topic: %s
 
-Create %d case-study interview questions. Each question should describe a realistic technical scenario that the candidate must analyze and solve.
+Create %d case-study interview questions. Each question should describe a realistic scenario that the candidate must analyze and solve.
+To raise the difficulty for advanced screening, inject realistic secondary "Pressure Multipliers" into the scenario (e.g., severe time pressure, conflicting stakeholder demands, or severe information asymmetry/undisclosed contract complications).
 
 Return a JSON array. Each question object:
 - id: a unique UUID string

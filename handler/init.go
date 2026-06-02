@@ -50,6 +50,7 @@ func NewHandler(
 type InitRequest struct {
 	DomainConfigPath string         `json:"domain_config_path" binding:"required"`
 	ArchetypeCounts  map[string]int `json:"archetype_counts"`
+	TotalQuestions   int            `json:"total_questions"`
 }
 
 type InitResponse struct {
@@ -84,7 +85,36 @@ func (h *Handler) InitSession(c *gin.Context) {
 
 	tasks := utils.WalkTree(cfg.Taxonomy, cfg.FrameworkPrompt, cfg.KnowledgeContext, cfg, req.ArchetypeCounts)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
+	// Step 6a: Divide tasks into initialTasks (total question count exactly 2) and backgroundTasks
+	var initialTasks []utils.GeneratorTask
+	var backgroundTasks []utils.GeneratorTask
+	
+	countSoFar := 0
+	for _, t := range tasks {
+		if countSoFar < 2 {
+			if countSoFar+t.Count > 2 {
+				initialCount := 2 - countSoFar
+				bgCount := t.Count - initialCount
+				
+				tInitial := t
+				tInitial.Count = initialCount
+				initialTasks = append(initialTasks, tInitial)
+				
+				tBg := t
+				tBg.Count = bgCount
+				backgroundTasks = append(backgroundTasks, tBg)
+				
+				countSoFar = 2
+			} else {
+				initialTasks = append(initialTasks, t)
+				countSoFar += t.Count
+			}
+		} else {
+			backgroundTasks = append(backgroundTasks, t)
+		}
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	type result struct {
@@ -93,50 +123,54 @@ func (h *Handler) InitSession(c *gin.Context) {
 		task      utils.GeneratorTask
 	}
 
-	resultCh := make(chan result, len(tasks))
-	sem := make(chan struct{}, 3)
-	for _, task := range tasks {
-		sem <- struct{}{}
-		go func(t utils.GeneratorTask) {
-			defer func() { <-sem }()
-			questions, err := h.dispatcher.Generate(ctx, generator.GeneratorInput{
-				Task:             t,
-				Competencies:     cfg.Competencies,
-				SituationalSlots: cfg.SituationalSlots,
-			})
-			resultCh <- result{questions: questions, err: err, task: t}
-		}(task)
-	}
+	// Step 6b: Synchronously generate questions for initialTasks
 	var pool []*session.Question
 	var genLog []session.GenerationLogEntry
 	var leafIDs []string
 
-	for range tasks {
-		r := <-resultCh
-		entry := session.GenerationLogEntry{
-			NodePath:  r.task.NodePath,
-			Archetype: r.task.Archetype,
-			Count:     r.task.Count,
+	if len(initialTasks) > 0 {
+		resultCh := make(chan result, len(initialTasks))
+		sem := make(chan struct{}, 3)
+		for _, task := range initialTasks {
+			sem <- struct{}{}
+			go func(t utils.GeneratorTask) {
+				defer func() { <-sem }()
+				questions, err := h.dispatcher.Generate(ctx, generator.GeneratorInput{
+					Task:             t,
+					Competencies:     cfg.Competencies,
+					SituationalSlots: cfg.SituationalSlots,
+				})
+				resultCh <- result{questions: questions, err: err, task: t}
+			}(task)
 		}
-		if r.err != nil {
-			entry.Error = r.err.Error()
-			h.logger.Warn("generator failed for leaf",
-				zap.String("node_path", r.task.NodePath),
-				zap.String("archetype", r.task.Archetype),
-				zap.Error(r.err),
-			)
-		} else {
-			entry.Count = len(r.questions)
-			pool = append(pool, r.questions...)
-			leafIDs = append(leafIDs, r.task.NodePath)
+
+		for range initialTasks {
+			r := <-resultCh
+			entry := session.GenerationLogEntry{
+				NodePath:  r.task.NodePath,
+				Archetype: r.task.Archetype,
+				Count:     r.task.Count,
+			}
+			if r.err != nil {
+				entry.Error = r.err.Error()
+				h.logger.Warn("initial generator failed for leaf",
+					zap.String("node_path", r.task.NodePath),
+					zap.String("archetype", r.task.Archetype),
+					zap.Error(r.err),
+				)
+			} else {
+				entry.Count = len(r.questions)
+				pool = append(pool, r.questions...)
+				leafIDs = append(leafIDs, r.task.NodePath)
+			}
+			genLog = append(genLog, entry)
 		}
-		genLog = append(genLog, entry)
 	}
 
-	// Pre-generate multiple choice options for all questions concurrently
+	// Step 6c: Pre-generate multiple choice options for all initial questions concurrently
 	if len(pool) > 0 {
 		var wg sync.WaitGroup
-		semOptions := make(chan struct{}, 5) // limit to 5 concurrent LLM calls
+		semOptions := make(chan struct{}, 5)
 		for _, q := range pool {
 			wg.Add(1)
 			semOptions <- struct{}{}
@@ -160,6 +194,11 @@ func (h *Handler) InitSession(c *gin.Context) {
 		selector.UpdateCoverage(coverage, firstQ, 0)
 	}
 
+	limitTotal := req.TotalQuestions
+	if limitTotal <= 0 {
+		limitTotal = 6 // Default fallback
+	}
+
 	state := &session.SessionState{
 		DomainID:        cfg.DomainID,
 		FrameworkPrompt: cfg.FrameworkPrompt,
@@ -170,12 +209,81 @@ func (h *Handler) InitSession(c *gin.Context) {
 		GenerationLog:   genLog,
 		AskedTotal:      1,
 		FollowUpDepth:   0,
+		LimitTotal:      limitTotal,
 	}
 
 	sessionID, err := h.sessionManager.Create(state)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Step 6d: Launch Background Goroutine to generate subsequent questions
+	if len(backgroundTasks) > 0 {
+		go func(sessID string, bgTasks []utils.GeneratorTask) {
+			bgCtx, bgCancel := context.WithTimeout(context.Background(), 300*time.Second)
+			defer bgCancel()
+
+			semBg := make(chan struct{}, 3) // limit concurrent generation calls
+			var wgBg sync.WaitGroup
+
+			for _, task := range bgTasks {
+				wgBg.Add(1)
+				semBg <- struct{}{}
+				go func(t utils.GeneratorTask) {
+					defer func() {
+						<-semBg
+						wgBg.Done()
+					}()
+
+					questions, err := h.dispatcher.Generate(bgCtx, generator.GeneratorInput{
+						Task:             t,
+						Competencies:     cfg.Competencies,
+						SituationalSlots: cfg.SituationalSlots,
+					})
+
+					entry := session.GenerationLogEntry{
+						NodePath:  t.NodePath,
+						Archetype: t.Archetype,
+						Count:     t.Count,
+					}
+
+					if err != nil {
+						entry.Error = err.Error()
+						h.logger.Warn("background generator failed for leaf",
+							zap.String("node_path", t.NodePath),
+							zap.String("archetype", t.Archetype),
+							zap.Error(err),
+						)
+						h.sessionManager.AddQuestionsToPool(sessID, nil, []session.GenerationLogEntry{entry}, nil)
+						return
+					}
+
+					// Pre-generate options for background questions concurrently
+					if len(questions) > 0 {
+						var wgOpts sync.WaitGroup
+						semOpts := make(chan struct{}, 5)
+						for _, q := range questions {
+							wgOpts.Add(1)
+							semOpts <- struct{}{}
+							go func(question *session.Question) {
+								defer func() {
+									<-semOpts
+									wgOpts.Done()
+								}()
+								h.populateOptionsIfNeeded(bgCtx, question, cfg.FrameworkPrompt)
+							}(q)
+						}
+						wgOpts.Wait()
+					}
+
+					entry.Count = len(questions)
+					h.sessionManager.AddQuestionsToPool(sessID, questions, []session.GenerationLogEntry{entry}, []string{t.NodePath})
+				}(task)
+			}
+			wgBg.Wait()
+			h.logger.Info("background generation fully completed for session", zap.String("session_id", sessID))
+		}(sessionID, backgroundTasks)
 	}
 
 	c.JSON(http.StatusOK, InitResponse{

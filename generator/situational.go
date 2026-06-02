@@ -73,6 +73,11 @@ Create a situational interview question using these parameters:
 %s
 
 The question should describe a realistic scenario using the role, constraint, stakeholder, and pressure.
+To raise the difficulty for advanced cognitive screening, you must inject one or more secondary "Pressure Multipliers" into the scenario:
+- Time Pressure (e.g. an imminent contract expiration, seller/buyer leaving the country shortly, or a strict 24/48-hour deadline).
+- Conflicting Authority/Demands (e.g. spouse vs primary decision-maker having opposing desires, or developer pressure vs buyer constraints).
+- Information Asymmetry/Uncertainty (e.g. unverified neighbor boundaries, missing occupancy certificate statuses, or pending undisclosed documentation issues).
+
 Return a JSON array containing one object with these fields:
 - id: a UUID string
 - text: the question text (a scenario the candidate must respond to)
